@@ -2,10 +2,11 @@ export const languages = {
   en: 'English',
   th: 'Thai',
 } as const
+export type AvailableLanguage = keyof typeof languages
 
-export const defaultLang: keyof typeof languages = 'en'
+export const defaultLang: AvailableLanguage = 'en'
 
-export const ui = {
+export const langJson = {
   en: {
     'nav.home': 'Home',
     'nav.about': 'About',

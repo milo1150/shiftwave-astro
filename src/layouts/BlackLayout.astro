@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-600 h-svh">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --font-primary: 'Kanit', sans-serif;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-primary);
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  p {
+    font-family: var(--font-primary);
+    font-size: 16px;
+    font-weight: 400;
+  }
+</style>
