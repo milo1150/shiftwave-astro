@@ -1,7 +1,7 @@
 ---
 import Reviews from '@src/components/Reviews'
 import type { AvailableLanguage } from '@src/i18n/i18n'
-import BlackLayout from '@src/layouts/BlackLayout.astro'
+import NoLayout from '@src/layouts/NoLayout.astro'
 
 export function getStaticPaths() {
   return [{ params: { lang: 'en' } }, { params: { lang: 'th' } }]
@@ -10,6 +10,6 @@ export function getStaticPaths() {
 const { lang } = Astro.params
 ---
 
-<BlackLayout>
+<NoLayout>
   <Reviews client:only lang={lang as AvailableLanguage} />
-</BlackLayout>
+</NoLayout>

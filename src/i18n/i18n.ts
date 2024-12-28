@@ -8,11 +8,15 @@ export const defaultLang: AvailableLanguage = 'en'
 
 export const langJson = {
   en: {
-    'nav.home': 'Home',
-    'nav.about': 'About',
+    'rating.title': 'Rate Our Service',
+    'rating.subtitle': 'How was your experience ?',
+    'rating.placeholder': 'Add a comment...',
+    'rating.submit': 'Submit',
   },
   th: {
-    'nav.home': 'บ้าน',
-    'nav.about': 'เกี่ยวข้อง',
+    'rating.title': 'ช่วยให้คะแนนบริการของเรา',
+    'rating.subtitle': 'คุณรู้สึกอย่างไรกับประสบการณ์ที่ได้รับ ?',
+    'rating.placeholder': 'ความคิดเห็นเพิ่มเติม...',
+    'rating.submit': 'บันทึก',
   },
 } as const
