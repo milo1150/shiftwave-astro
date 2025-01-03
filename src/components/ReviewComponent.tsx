@@ -4,7 +4,7 @@ import { Button, Card, ConfigProvider, Rate } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { createReview } from '@src/services/ReviewService'
+import { createReview, generatePDF } from '@src/services/ReviewService'
 
 export interface ReviewComponentProps {
   lang: AvailableLanguage
@@ -18,6 +18,11 @@ export default function ReviewComponent({ lang }: ReviewComponentProps) {
 
   const createReviewMutation = useMutation({
     mutationFn: createReview,
+    retry: false,
+  })
+
+  const generatePdfMutation = useMutation({
+    mutationFn: generatePDF,
     retry: false,
   })
 
@@ -79,6 +84,16 @@ export default function ReviewComponent({ lang }: ReviewComponentProps) {
               {t('rating.submit')}
             </Button>
           </ConfigProvider>
+
+          <Button
+            style={{ height: 45 }}
+            className="w-full rounded-xl"
+            type="primary"
+            loading={createReviewMutation.status === 'pending'}
+            onClick={() => generatePdfMutation.mutate({ branchId: 44 })}
+          >
+            example generate pdf
+          </Button>
         </div>
       </Card>
     </div>
