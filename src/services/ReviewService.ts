@@ -1,7 +1,7 @@
-const baseUrl = 'http://localhost:8080/'
+import { ENDPOINT } from '@src/resources/endpoint'
 
 export const fetchReview = async () => {
-  const response = await fetch(`${baseUrl}ratings`)
+  const response = await fetch(ENDPOINT.review)
   if (!response.ok) {
     throw new Error('Failed to fetch reviews')
   }
@@ -13,7 +13,7 @@ export const createReview = async (payload: {
   score: number
   branch: number
 }) => {
-  const response = await fetch(`${baseUrl}rating`, {
+  const response = await fetch(ENDPOINT.review, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
