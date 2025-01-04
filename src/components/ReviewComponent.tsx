@@ -1,6 +1,6 @@
 import type { AvailableLanguage } from '@src/i18n/i18n'
 import { useTranslations } from '@src/i18n/utils'
-import { Button, Card, ConfigProvider, Rate } from 'antd'
+import { Button, Card, ConfigProvider, Input, Rate } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
@@ -30,7 +30,9 @@ export default function ReviewComponent({ lang }: ReviewComponentProps) {
     <div className="flex text-center justify-center p-9 ">
       <Card className="w-1/3 shadow-lg rounded-xl border-none">
         <p className="text-2xl font-bold">{t('rating.title')}</p>
+
         <p className="text-md pt-2">{t('rating.subtitle')}</p>
+
         <div className="pb-6 pt-3">
           <Rate
             onChange={setReviewScore}
@@ -38,6 +40,7 @@ export default function ReviewComponent({ lang }: ReviewComponentProps) {
             className="text-4xl"
           />
         </div>
+
         <div>
           <ConfigProvider
             theme={{
@@ -57,7 +60,8 @@ export default function ReviewComponent({ lang }: ReviewComponentProps) {
             />
           </ConfigProvider>
         </div>
-        <div className="pt-3">
+
+        <div className="pt-1">
           <ConfigProvider
             theme={{
               token: {
@@ -85,7 +89,7 @@ export default function ReviewComponent({ lang }: ReviewComponentProps) {
             </Button>
           </ConfigProvider>
 
-          <Button
+          {/* <Button
             style={{ height: 45 }}
             className="w-full rounded-xl"
             type="primary"
@@ -93,7 +97,7 @@ export default function ReviewComponent({ lang }: ReviewComponentProps) {
             onClick={() => generatePdfMutation.mutate({ branchId: 44 })}
           >
             example generate pdf
-          </Button>
+          </Button> */}
         </div>
       </Card>
     </div>
