@@ -2,7 +2,7 @@ import type { AvailableLanguage } from '@src/i18n/i18n'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import ReviewComponent, {
   type ReviewComponentProps,
-} from '@src/components/ReviewComponent'
+} from '@src/components/user/ReviewComponent'
 import { toNumber } from 'lodash'
 
 const queryClient = new QueryClient()
