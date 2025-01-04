@@ -8,9 +8,13 @@ import { createReview, generatePDF } from '@src/services/ReviewService'
 
 export interface ReviewComponentProps {
   lang: AvailableLanguage
+  branchId: number | null
 }
 
-export default function ReviewComponent({ lang }: ReviewComponentProps) {
+export default function ReviewComponent({
+  lang,
+  branchId,
+}: ReviewComponentProps) {
   const t = useTranslations(lang)
 
   const [reviewScore, setReviewScore] = useState<number>(0)
@@ -75,11 +79,12 @@ export default function ReviewComponent({ lang }: ReviewComponentProps) {
               style={{ height: 45 }}
               className="w-full rounded-xl"
               type="primary"
-              // disabled={value === 0}
+              disabled={reviewScore === 0 && typeof branchId === 'number'}
               loading={createReviewMutation.status === 'pending'}
               onClick={() =>
+                branchId &&
                 createReviewMutation.mutate({
-                  branch: 44,
+                  branch: branchId,
                   remark,
                   score: reviewScore,
                 })
@@ -89,15 +94,19 @@ export default function ReviewComponent({ lang }: ReviewComponentProps) {
             </Button>
           </ConfigProvider>
 
-          {/* <Button
-            style={{ height: 45 }}
-            className="w-full rounded-xl"
-            type="primary"
-            loading={createReviewMutation.status === 'pending'}
-            onClick={() => generatePdfMutation.mutate({ branchId: 44 })}
-          >
-            example generate pdf
-          </Button> */}
+          <div className="pt-1">
+            <Button
+              style={{ height: 45 }}
+              className="w-full rounded-xl"
+              type="primary"
+              loading={createReviewMutation.status === 'pending'}
+              onClick={() =>
+                branchId && generatePdfMutation.mutate({ branchId })
+              }
+            >
+              example generate pdf
+            </Button>
+          </div>
         </div>
       </Card>
     </div>
