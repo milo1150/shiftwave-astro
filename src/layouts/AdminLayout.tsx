@@ -3,7 +3,7 @@ import '@src/style/tailwind.css'
 
 import React, { useState, type ReactNode } from 'react'
 import { MessageTwoTone } from '@ant-design/icons'
-import { Layout, Menu, theme } from 'antd'
+import { Layout, Menu } from 'antd'
 
 type Props = {
   children: ReactNode
@@ -13,12 +13,9 @@ const { Sider, Content } = Layout
 
 const AdminLayout: React.FC<Props> = ({ children }) => {
   const [collapsed, _setCollapsed] = useState(true)
-  const {
-    token: { borderRadiusLG },
-  } = theme.useToken()
 
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout className="h-lvh">
       <Sider
         trigger={null}
         collapsible
@@ -42,14 +39,7 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
         />
       </Sider>
       <Layout>
-        <Content
-          style={{
-            // padding: 24,
-            borderRadius: borderRadiusLG,
-          }}
-        >
-          {children}
-        </Content>
+        <Content className="bg-gray-100">{children}</Content>
       </Layout>
     </Layout>
   )
