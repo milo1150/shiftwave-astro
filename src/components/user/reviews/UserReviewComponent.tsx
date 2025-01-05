@@ -1,20 +1,16 @@
-import type { AvailableLanguage } from '@src/i18n/i18n'
 import { useTranslations } from '@src/i18n/utils'
 import { Button, Card, ConfigProvider, Input, Rate } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { createReview, generatePDF } from '@src/services/ReviewService'
+import type { DefaultPageProps } from '@src/types/DefaultType'
 
-export interface ReviewComponentProps {
-  lang: AvailableLanguage
+export interface Props extends DefaultPageProps {
   branchId: number | null
 }
 
-export default function ReviewComponent({
-  lang,
-  branchId,
-}: ReviewComponentProps) {
+const ReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
   const t = useTranslations(lang)
 
   const [reviewScore, setReviewScore] = useState<number>(0)
@@ -112,3 +108,5 @@ export default function ReviewComponent({
     </div>
   )
 }
+
+export default ReviewComponent

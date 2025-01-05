@@ -1,0 +1,16 @@
+---
+import type { AvailableLanguage } from '@src/i18n/i18n'
+
+import AdminReviewPage from '@src/components/admin/reviews/AdminReviewPage'
+import AdminLayout from '@src/layouts/AdminLayout'
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'en' } }, { params: { lang: 'th' } }]
+}
+
+const { lang } = Astro.params
+---
+
+<AdminLayout client:only>
+  <AdminReviewPage client:only lang={lang as AvailableLanguage} />
+</AdminLayout>
