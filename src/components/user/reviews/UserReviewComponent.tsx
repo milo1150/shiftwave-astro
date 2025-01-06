@@ -90,7 +90,7 @@ const ReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
             </Button>
           </ConfigProvider>
 
-          <div className="pt-1">
+          {/* <div className="pt-1">
             <Button
               style={{ height: 45 }}
               className="w-full rounded-xl"
@@ -102,7 +102,7 @@ const ReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
             >
               example generate pdf
             </Button>
-          </div>
+          </div> */}
         </div>
       </Card>
     </div>
