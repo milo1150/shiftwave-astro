@@ -19,7 +19,7 @@ export const CustomerReviewCard: React.FC = () => {
     <>
       <Card className="rounded-xl border-slate-50">
         <Rate value={5} className="text-sm" disabled />
-        <p className="text-md">{remark}</p>
+        <p className="text-md py-2">{remark}</p>
         <p className="text-sm justify-self-end text-gray-400 font-thin">
           {timestamp}
         </p>

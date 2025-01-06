@@ -7,6 +7,7 @@ import AverageRating from '@src/components/admin/reviews/AverageRating'
 import BarRating from '@src/components/admin/reviews/BarRating'
 import CustomerReviewCard from './CustomerReviewCard'
 import _ from 'lodash'
+import SwitchableDatepicker from '@src/components/datepicker/SwitchableDatepicker'
 
 const AdminReviewPage: React.FC<DefaultPageProps> = () => {
   return (
@@ -22,7 +23,7 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
         <Flex gap="small" className="w-full">
           <Flex className="justify-between w-full">
             <p className="text-3xl font-bold">Reviews</p>
-            <p>Filter</p>
+            <SwitchableDatepicker />
           </Flex>
         </Flex>
 

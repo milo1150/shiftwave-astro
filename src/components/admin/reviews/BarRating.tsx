@@ -10,7 +10,7 @@ type SingleBarProps = {
 const BarValue: React.FC<SingleBarProps> = ({ score, percent, count }) => {
   return (
     <>
-      <Flex align="center">
+      <Flex align="center" className="w-10/12 pl-4">
         <StarFilled className="pr-1 text-gray-300" />
         <p className="pr-3 text-md w-4">{score}</p>
         <Progress
