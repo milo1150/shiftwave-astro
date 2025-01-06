@@ -28,7 +28,8 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
           theme="light"
           mode="inline"
           defaultSelectedKeys={['reviews']}
-          style={{ fontFamily: 'Kanit', padding: '4px' }}
+          style={{ fontFamily: 'Kanit' }}
+          className="p-1 place-items-center"
           items={[
             {
               key: 'reviews',

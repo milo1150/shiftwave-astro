@@ -1,7 +1,7 @@
 import type { DefaultPageProps } from '@src/types/DefaultType'
 import type React from 'react'
 
-import { Col, Divider, Flex, Row } from 'antd'
+import { Col, Divider, Flex, Pagination, Row } from 'antd'
 import TotalReview from '@src/components/admin/reviews/TotalReview'
 import AverageRating from '@src/components/admin/reviews/AverageRating'
 import BarRating from '@src/components/admin/reviews/BarRating'
@@ -56,6 +56,9 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
             )
           })}
         </Row>
+
+        {/* Footer */}
+        <Pagination simple defaultCurrent={2} total={50} />
       </Flex>
     </Flex>
   )
