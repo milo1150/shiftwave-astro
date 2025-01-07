@@ -1,38 +1,40 @@
-import { ENDPOINT } from '@src/resources/endpoint'
+import { BASE_URL, ENDPOINT } from '@src/resources/endpoint'
 import type { FetchReviewsResponse } from '@src/types/Review'
+import axios from 'axios'
 
 export const fetchReviews = async (): Promise<FetchReviewsResponse> => {
-  const response = await fetch(ENDPOINT.reviews, {
+  const res = await axios<FetchReviewsResponse>({
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    url: ENDPOINT.reviews,
+    params: { page_size: 30 },
   })
 
-  if (!response.ok) {
+  if (res.status !== 200) {
     throw new Error('Failed to fetch reviews')
   }
 
-  return response.json()
+  return res.data
 }
 
 export const createReview = async (payload: {
   score: number
   branch: number
+  remark: string
 }): Promise<unknown> => {
-  const response = await fetch(ENDPOINT.review, {
+  const res = await axios({
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
+    url: ENDPOINT.review,
+    data: payload,
   })
 
-  if (!response.ok) {
+  if (res.status !== 200) {
     throw new Error('Failed to create review')
   }
 
-  return response.json()
+  return res.data
 }
 
+// TODO: use axios insteadof fetch
 export const generatePDF = async (payload: {
   branchId: number
 }): Promise<void> => {

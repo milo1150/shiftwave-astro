@@ -18,7 +18,7 @@ export const CustomerReviewCard: React.FC<Props> = ({
     <>
       <Card className="rounded-xl border-slate-50">
         <Rate value={score} className="text-sm" disabled />
-        <p className="text-md py-2">{remark}</p>
+        {remark && <p className="text-md py-2">{remark}</p>}
         <p className="text-sm justify-self-end text-gray-400 font-thin">
           {timestamp}
         </p>

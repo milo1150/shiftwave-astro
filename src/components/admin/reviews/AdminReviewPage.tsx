@@ -59,13 +59,13 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
         <Divider className="border-gray-300 " type="horizontal" />
         <Row
           gutter={12}
-          className="overflow-y-auto overflow-x-hidden customer-review-container"
+          className="overflow-y-auto overflow-x-hidden content-start customer-review-container"
           style={{ height: '75vh' }}
         >
           {reviews?.items
             ? (reviews?.items).map((review, i) => {
                 return (
-                  <Col md={12} xl={8} xxl={6} className="pt-3" key={i}>
+                  <Col md={12} xl={8} xxl={6} className="pt-3 h-fit" key={i}>
                     <CustomerReviewCard
                       score={review.score}
                       remark={review.remark}

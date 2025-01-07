@@ -16,15 +16,27 @@ const ReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
   const [reviewScore, setReviewScore] = useState<number>(0)
   const [remark, setRemark] = useState<string>('')
 
+  const generatePdfMutation = useMutation({
+    mutationFn: generatePDF,
+    retry: false,
+  })
   const createReviewMutation = useMutation({
     mutationFn: createReview,
     retry: false,
   })
 
-  const generatePdfMutation = useMutation({
-    mutationFn: generatePDF,
-    retry: false,
-  })
+  const onClickCreate = () => {
+    if (!branchId) {
+      console.warn('branch required')
+      return
+    }
+
+    createReviewMutation.mutate({
+      branch: branchId,
+      score: reviewScore,
+      remark: remark,
+    })
+  }
 
   return (
     <div className="flex text-center justify-center p-9 ">
@@ -77,14 +89,7 @@ const ReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
               type="primary"
               disabled={reviewScore === 0 && typeof branchId === 'number'}
               loading={createReviewMutation.status === 'pending'}
-              onClick={() =>
-                branchId &&
-                createReviewMutation.mutate({
-                  branch: branchId,
-                  remark,
-                  score: reviewScore,
-                })
-              }
+              onClick={() => onClickCreate()}
             >
               {t('rating.submit')}
             </Button>
