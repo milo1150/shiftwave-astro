@@ -1,18 +1,23 @@
 import { ENDPOINT } from '@src/resources/endpoint'
+import type { FetchReviewsResponse } from '@src/types/Review'
 
-export const fetchReview = async () => {
-  const response = await fetch(ENDPOINT.review)
+export const fetchReviews = async (): Promise<FetchReviewsResponse> => {
+  const response = await fetch(ENDPOINT.reviews, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  })
+
   if (!response.ok) {
     throw new Error('Failed to fetch reviews')
   }
+
   return response.json()
 }
 
 export const createReview = async (payload: {
-  remark: string
   score: number
   branch: number
-}) => {
+}): Promise<unknown> => {
   const response = await fetch(ENDPOINT.review, {
     method: 'POST',
     headers: {
@@ -20,13 +25,17 @@ export const createReview = async (payload: {
     },
     body: JSON.stringify(payload),
   })
+
   if (!response.ok) {
     throw new Error('Failed to create review')
   }
+
   return response.json()
 }
 
-export const generatePDF = async (payload: { branchId: number }) => {
+export const generatePDF = async (payload: {
+  branchId: number
+}): Promise<void> => {
   // Construct URL with query parameters
   const baseUrl = new URL(ENDPOINT.generatePDF)
   baseUrl.searchParams.append('branch_id', payload.branchId.toString())
