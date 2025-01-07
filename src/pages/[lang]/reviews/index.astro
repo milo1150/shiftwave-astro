@@ -10,6 +10,10 @@ export function getStaticPaths() {
 const { lang } = Astro.params
 ---
 
+<head>
+  <title>Shiftwave | Feedback</title>
+</head>
+
 <NoLayout>
   <ReviewPage client:only lang={lang as AvailableLanguage} />
 </NoLayout>

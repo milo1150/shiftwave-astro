@@ -1,0 +1,50 @@
+---
+import AdminLayout from '@src/layouts/AdminLayout'
+import WrappedAdminReviewPage from '@src/components/admin/reviews/AdminReviewPage'
+import WrapperAdminSettingPage from '@src/components/admin/setting/AdminSettingPage'
+import type { ShiftwaveRoute } from '@src/react/route'
+import type { AvailableLanguage } from '@src/i18n/i18n'
+import _ from 'lodash'
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en', section: 'reviews' } },
+    { params: { lang: 'th', section: 'reviews' } },
+    { params: { lang: 'en', section: 'setting' } },
+    { params: { lang: 'th', section: 'setting' } },
+  ]
+}
+
+const { lang, section } = Astro.params
+const titleMenu = _.upperFirst(section)
+---
+
+<html lang={lang}>
+  <head>
+    <title>Shiftwave | {titleMenu}</title>
+  </head>
+  <body>
+    <AdminLayout
+      client:only
+      lang={lang as AvailableLanguage}
+      routeMenu={section as ShiftwaveRoute}
+    >
+      {
+        section === 'reviews' && (
+          <WrappedAdminReviewPage
+            client:only
+            lang={lang as AvailableLanguage}
+          />
+        )
+      }
+      {
+        section === 'setting' && (
+          <WrapperAdminSettingPage
+            client:only
+            lang={lang as AvailableLanguage}
+          />
+        )
+      }
+    </AdminLayout>
+  </body>
+</html>
