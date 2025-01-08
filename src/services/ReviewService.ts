@@ -1,12 +1,17 @@
 import { BASE_URL, ENDPOINT } from '@src/resources/endpoint'
-import type { FetchReviewsResponse } from '@src/types/Review'
+import type {
+  FetchReviewsQueryParams,
+  FetchReviewsResponse,
+} from '@src/types/Review'
 import axios from 'axios'
 
-export const fetchReviews = async (): Promise<FetchReviewsResponse> => {
+export const fetchReviews = async (
+  pageParam: FetchReviewsQueryParams
+): Promise<FetchReviewsResponse> => {
   const res = await axios<FetchReviewsResponse>({
     method: 'GET',
     url: ENDPOINT.reviews,
-    params: { page_size: 30 },
+    params: { ...pageParam },
   })
 
   if (res.status !== 200) {

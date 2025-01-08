@@ -3,26 +3,64 @@ import _ from 'lodash'
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery,
+  useInfiniteQuery,
 } from '@tanstack/react-query'
+import weekOfYear from 'dayjs/plugin/weekOfYear'
 
 import TotalReview from '@src/components/admin/reviews/TotalReview'
 import AverageRating from '@src/components/admin/reviews/AverageRating'
 import BarRating from '@src/components/admin/reviews/BarRating'
 import CustomerReviewCard from '@src/components/admin/reviews/CustomerReviewCard'
-import SwitchableDatepicker from '@src/components/datepicker/SwitchableDatepicker'
+import SwitchableDatepicker, {
+  type HandleOnChangeDateValueType,
+} from '@src/components/datepicker/SwitchableDatepicker'
 import { fetchReviews } from '@src/services/ReviewService'
 
 import type { DefaultPageProps } from '@src/types/DefaultType'
 import type React from 'react'
+import { useState } from 'react'
+import type { FetchReviewsQueryParams } from '@src/types/Review'
+import dayjs from 'dayjs'
+import { match } from 'ts-pattern'
+import { DATE_FORMAT } from '@src/resources/date'
+
+dayjs.extend(weekOfYear)
 
 const queryClient = new QueryClient()
 
 const AdminReviewPage: React.FC<DefaultPageProps> = () => {
-  const { data: reviews, refetch: refetchReviews } = useQuery({
-    queryKey: ['reviews'],
-    queryFn: fetchReviews,
+  const [params, setParams] = useState<FetchReviewsQueryParams>({
+    page: 1,
+    page_size: 20,
+    date_type: 'date',
+    date_value: dayjs().format(DATE_FORMAT.API),
   })
+
+  const { data: reviews } = useInfiniteQuery({
+    queryKey: ['reviews', params],
+    initialPageParam: params,
+    queryFn: ({ pageParam }) => fetchReviews(pageParam),
+    getNextPageParam: () => undefined,
+  })
+
+  const handleOnChangeDateValue = (e: HandleOnChangeDateValueType) => {
+    const dateValue = match(e.type)
+      .with('date', () => dayjs(e.value).format(DATE_FORMAT.API))
+      .with('week', () => dayjs(e.value).week().toString())
+      .with('month', () => dayjs(e.value).month().toString())
+      .with('year', () => dayjs(e.value).year().toString())
+      .otherwise(() => '')
+
+    setParams((prev) => {
+      return { ...prev, date_type: e.type, date_value: dateValue }
+    })
+  }
+
+  const handleOnChangePaginate = (page: number, pageSize: number) => {
+    setParams((prev) => {
+      return { ...prev, page, page_size: pageSize }
+    })
+  }
 
   return (
     <Flex gap="middle" className="p-3" justify="center" align="center" vertical>
@@ -37,7 +75,9 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
         <Flex gap="small" className="w-full">
           <Flex className="justify-between w-full">
             <p className="text-3xl font-bold">Reviews</p>
-            <SwitchableDatepicker />
+            <SwitchableDatepicker
+              onChangeValueCallBack={(e) => handleOnChangeDateValue(e)}
+            />
           </Flex>
         </Flex>
 
@@ -62,8 +102,8 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
           className="overflow-y-auto overflow-x-hidden content-start customer-review-container"
           style={{ height: '75vh' }}
         >
-          {reviews?.items
-            ? (reviews?.items).map((review, i) => {
+          {reviews?.pages.length
+            ? (reviews?.pages[0].items).map((review, i) => {
                 return (
                   <Col md={12} xl={8} xxl={6} className="pt-3 h-fit" key={i}>
                     <CustomerReviewCard
@@ -78,7 +118,13 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
         </Row>
 
         {/* Footer */}
-        <Pagination simple defaultCurrent={2} total={50} />
+        <Pagination
+          simple
+          defaultCurrent={params.page}
+          defaultPageSize={params.page_size}
+          total={reviews?.pages[0].total_items || 0}
+          onChange={(page, pageSize) => handleOnChangePaginate(page, pageSize)}
+        />
       </Flex>
     </Flex>
   )

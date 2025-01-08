@@ -5,6 +5,7 @@ import WrapperAdminSettingPage from '@src/components/admin/setting/AdminSettingP
 import type { ShiftwaveRoute } from '@src/react/route'
 import type { AvailableLanguage } from '@src/i18n/i18n'
 import _ from 'lodash'
+import { ClientRouter } from 'astro:transitions'
 
 export function getStaticPaths() {
   return [
@@ -22,22 +23,33 @@ const titleMenu = _.upperFirst(section)
 <html lang={lang}>
   <head>
     <title>Shiftwave | {titleMenu}</title>
+    <ClientRouter />
   </head>
+  <body>
+    <AdminLayout
+      client:only="react"
+      transition:animate="fade"
+      lang={lang as AvailableLanguage}
+      routeMenu={section as ShiftwaveRoute}
+    >
+      {
+        section === 'reviews' && (
+          <WrappedAdminReviewPage
+            transition:animate="fade"
+            client:only="react"
+            lang={lang as AvailableLanguage}
+          />
+        )
+      }
+      {
+        section === 'setting' && (
+          <WrapperAdminSettingPage
+            transition:animate="fade"
+            client:only="react"
+            lang={lang as AvailableLanguage}
+          />
+        )
+      }
+    </AdminLayout>
+  </body>
 </html>
-
-<AdminLayout
-  client:only
-  lang={lang as AvailableLanguage}
-  routeMenu={section as ShiftwaveRoute}
->
-  {
-    section === 'reviews' && (
-      <WrappedAdminReviewPage client:only lang={lang as AvailableLanguage} />
-    )
-  }
-  {
-    section === 'setting' && (
-      <WrapperAdminSettingPage client:only lang={lang as AvailableLanguage} />
-    )
-  }
-</AdminLayout>
