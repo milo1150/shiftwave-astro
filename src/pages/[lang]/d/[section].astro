@@ -23,28 +23,21 @@ const titleMenu = _.upperFirst(section)
   <head>
     <title>Shiftwave | {titleMenu}</title>
   </head>
-  <body>
-    <AdminLayout
-      client:only
-      lang={lang as AvailableLanguage}
-      routeMenu={section as ShiftwaveRoute}
-    >
-      {
-        section === 'reviews' && (
-          <WrappedAdminReviewPage
-            client:only
-            lang={lang as AvailableLanguage}
-          />
-        )
-      }
-      {
-        section === 'setting' && (
-          <WrapperAdminSettingPage
-            client:only
-            lang={lang as AvailableLanguage}
-          />
-        )
-      }
-    </AdminLayout>
-  </body>
 </html>
+
+<AdminLayout
+  client:only
+  lang={lang as AvailableLanguage}
+  routeMenu={section as ShiftwaveRoute}
+>
+  {
+    section === 'reviews' && (
+      <WrappedAdminReviewPage client:only lang={lang as AvailableLanguage} />
+    )
+  }
+  {
+    section === 'setting' && (
+      <WrapperAdminSettingPage client:only lang={lang as AvailableLanguage} />
+    )
+  }
+</AdminLayout>
