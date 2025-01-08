@@ -1,7 +1,7 @@
 import '@src/style/global.css'
 import '@src/style/tailwind.css'
 
-import React, { useEffect, useState, type ReactNode } from 'react'
+import React, { useState, type ReactNode } from 'react'
 import { MessageFilled, SettingFilled } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
 import { match } from 'ts-pattern'
@@ -21,10 +21,6 @@ const AdminLayout: React.FC<Props> = ({ children, lang, routeMenu }) => {
   const [selectedMenuKey, setSelectedMenuKey] = useState<ShiftwaveRoute[]>([
     routeMenu,
   ])
-
-  useEffect(() => {
-    console.log(selectedMenuKey, lang)
-  }, [selectedMenuKey])
 
   return (
     <Layout className="h-lvh">
