@@ -1,4 +1,13 @@
-import { Col, Divider, Flex, Pagination, Row } from 'antd'
+import {
+  Col,
+  ConfigProvider,
+  Divider,
+  Flex,
+  Pagination,
+  Row,
+  theme,
+  Typography,
+} from 'antd'
 import _ from 'lodash'
 import {
   QueryClient,
@@ -23,12 +32,15 @@ import SwitchableDatepicker, {
 } from '@src/components/datepicker/SwitchableDatepicker'
 import { fetchReviews } from '@src/services/ReviewService'
 import { DATE_FORMAT } from '@src/resources/date'
+import { useAntdStore } from '@src/store/store'
 
 dayjs.extend(weekOfYear)
 
 const queryClient = new QueryClient()
+const { Text } = Typography
 
 const AdminReviewPage: React.FC<DefaultPageProps> = () => {
+  const { darkTheme } = useAntdStore((state) => state)
   const [params, setParams] = useState<FetchReviewsQueryParams>({
     page: 1,
     page_size: 20,
@@ -81,70 +93,84 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
   }
 
   return (
-    <Flex gap="middle" className="p-3" justify="center" align="center" vertical>
+    <ConfigProvider
+      theme={{
+        algorithm: darkTheme ? theme.darkAlgorithm : [],
+      }}
+    >
       <Flex
-        gap="small"
-        className="w-3/5"
+        gap="middle"
+        className="p-3"
         justify="center"
         align="center"
         vertical
       >
-        {/* Header */}
-        <Flex gap="small" className="w-full">
-          <Flex className="justify-between w-full">
-            <p className="text-3xl font-bold">Reviews</p>
-            <SwitchableDatepicker
-              onChangeValueCallBack={(e) => handleOnChangeDateValue(e)}
-            />
-          </Flex>
-        </Flex>
-
-        {/* Summary */}
         <Flex
           gap="small"
+          className="w-3/5"
           justify="center"
           align="center"
-          className="w-full justify-between pt-5"
+          vertical
         >
-          <TotalReview />
-          <Divider className="border-gray-300 h-24" type="vertical" />
-          <AverageRating />
-          <Divider className="border-gray-300 h-24" type="vertical" />
-          <BarRating />
+          {/* Header */}
+          <Flex gap="small" className="w-full">
+            <Flex className="justify-between w-full">
+              <Text className="text-3xl font-bold">Reviews</Text>
+              <SwitchableDatepicker
+                onChangeValueCallBack={(e) => handleOnChangeDateValue(e)}
+              />
+            </Flex>
+          </Flex>
+
+          {/* Summary */}
+          <Flex
+            gap="small"
+            justify="center"
+            align="center"
+            className="w-full justify-between pt-5"
+          >
+            <TotalReview />
+            <Divider className="border-gray-300 h-24" type="vertical" />
+            <AverageRating />
+            <Divider className="border-gray-300 h-24" type="vertical" />
+            <BarRating />
+          </Flex>
+
+          {/* Card list */}
+          <Divider className="border-gray-300 " type="horizontal" />
+          <Row
+            gutter={12}
+            className="overflow-y-auto overflow-x-hidden content-start customer-review-container"
+            style={{ height: '75vh' }}
+          >
+            {reviews?.pages.length
+              ? (reviews?.pages[0].items).map((review, i) => {
+                  return (
+                    <Col md={12} xl={8} xxl={6} className="pt-3 h-fit" key={i}>
+                      <CustomerReviewCard
+                        score={review.score}
+                        remark={review.remark}
+                        timestamp={review.created_at}
+                      />
+                    </Col>
+                  )
+                })
+              : []}
+          </Row>
+
+          {/* Footer */}
+          <Pagination
+            simple
+            defaultCurrent={params.page}
+            defaultPageSize={params.page_size}
+            total={reviews?.pages[0].total_items || 0}
+            onChange={(page, pageSize) =>
+              handleOnChangePaginate(page, pageSize)
+            }
+          />
         </Flex>
-
-        {/* Card list */}
-        <Divider className="border-gray-300 " type="horizontal" />
-        <Row
-          gutter={12}
-          className="overflow-y-auto overflow-x-hidden content-start customer-review-container"
-          style={{ height: '75vh' }}
-        >
-          {reviews?.pages.length
-            ? (reviews?.pages[0].items).map((review, i) => {
-                return (
-                  <Col md={12} xl={8} xxl={6} className="pt-3 h-fit" key={i}>
-                    <CustomerReviewCard
-                      score={review.score}
-                      remark={review.remark}
-                      timestamp={review.created_at}
-                    />
-                  </Col>
-                )
-              })
-            : []}
-        </Row>
-
-        {/* Footer */}
-        <Pagination
-          simple
-          defaultCurrent={params.page}
-          defaultPageSize={params.page_size}
-          total={reviews?.pages[0].total_items || 0}
-          onChange={(page, pageSize) => handleOnChangePaginate(page, pageSize)}
-        />
       </Flex>
-    </Flex>
+    </ConfigProvider>
   )
 }
 

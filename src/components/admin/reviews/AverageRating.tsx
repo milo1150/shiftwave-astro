@@ -1,12 +1,14 @@
-import { Flex, Rate } from 'antd'
+import { Flex, Rate, Typography } from 'antd'
+
+const { Text } = Typography
 
 const AverageRating: React.FC = () => {
   return (
     <>
       <Flex justify="center" align="center" className="w-1/3" vertical>
-        <p className="text-md pb-2">Average Rating</p>
+        <Text className="text-lg pb-2">Average Rating</Text>
         <Flex justify="center " align="center">
-          <p className="text-3xl mr-2">4.0</p>
+          <Text className="text-3xl mr-2">4.0</Text>
           <Rate value={4} className="text-2xl" disabled></Rate>
         </Flex>
       </Flex>
