@@ -4,7 +4,10 @@ export type FetchReviewsQueryParams = {
   page?: number
   page_size?: number
   date_type?: DatePickerType
-  date_value?: string
+  start_date?: string
+  end_date?: string
+  month?: number
+  year?: number
 }
 
 export type FetchReviewsResponse = {

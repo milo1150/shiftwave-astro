@@ -6,6 +6,13 @@ import {
   useInfiniteQuery,
 } from '@tanstack/react-query'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
+import { useState } from 'react'
+import dayjs from 'dayjs'
+import { match } from 'ts-pattern'
+
+import type { DefaultPageProps } from '@src/types/DefaultType'
+import type React from 'react'
+import type { FetchReviewsQueryParams } from '@src/types/Review'
 
 import TotalReview from '@src/components/admin/reviews/TotalReview'
 import AverageRating from '@src/components/admin/reviews/AverageRating'
@@ -15,13 +22,6 @@ import SwitchableDatepicker, {
   type HandleOnChangeDateValueType,
 } from '@src/components/datepicker/SwitchableDatepicker'
 import { fetchReviews } from '@src/services/ReviewService'
-
-import type { DefaultPageProps } from '@src/types/DefaultType'
-import type React from 'react'
-import { useState } from 'react'
-import type { FetchReviewsQueryParams } from '@src/types/Review'
-import dayjs from 'dayjs'
-import { match } from 'ts-pattern'
 import { DATE_FORMAT } from '@src/resources/date'
 
 dayjs.extend(weekOfYear)
@@ -33,7 +33,7 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
     page: 1,
     page_size: 20,
     date_type: 'date',
-    date_value: dayjs().format(DATE_FORMAT.API),
+    start_date: dayjs().format(DATE_FORMAT.API),
   })
 
   const { data: reviews } = useInfiniteQuery({
@@ -41,18 +41,36 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
     initialPageParam: params,
     queryFn: ({ pageParam }) => fetchReviews(pageParam),
     getNextPageParam: () => undefined,
+    retry: false,
   })
 
   const handleOnChangeDateValue = (e: HandleOnChangeDateValueType) => {
-    const dateValue = match(e.type)
-      .with('date', () => dayjs(e.value).format(DATE_FORMAT.API))
-      .with('week', () => dayjs(e.value).week().toString())
-      .with('month', () => dayjs(e.value).month().toString())
-      .with('year', () => dayjs(e.value).year().toString())
-      .otherwise(() => '')
+    const startDate = match(e.type)
+      .with('date', () => dayjs(e.startDate).format(DATE_FORMAT.API))
+      .with('date_range', () => dayjs(e.startDate).format(DATE_FORMAT.API))
+      .otherwise(() => undefined)
+
+    const endDate = match(e.type)
+      .with('date_range', () => dayjs(e.endDate).format(DATE_FORMAT.API))
+      .otherwise(() => undefined)
+
+    const month = match(e.type)
+      .with('month', () => dayjs(e.startDate).month() + 1)
+      .otherwise(() => undefined)
+
+    const year = match(e.type)
+      .with('year', () => dayjs(e.startDate).year())
+      .otherwise(() => undefined)
 
     setParams((prev) => {
-      return { ...prev, date_type: e.type, date_value: dateValue }
+      return {
+        ...prev,
+        date_type: e.type,
+        start_date: startDate,
+        end_date: endDate,
+        month,
+        year,
+      }
     })
   }
 
