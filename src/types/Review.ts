@@ -24,3 +24,18 @@ export type Review = {
   remark: string
   score: number
 }
+
+export type AverageRatingResponse = {
+  total_review: number
+  average_rating: number
+  five_star_count: number
+  five_star_percent: number
+  four_star_count: number
+  four_star_percent: number
+  three_star_count: number
+  three_star_percent: number
+  two_star_count: number
+  two_star_percent: number
+  one_star_count: number
+  one_star_percent: number
+}

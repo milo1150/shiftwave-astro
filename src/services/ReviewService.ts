@@ -1,5 +1,6 @@
 import { BASE_URL, ENDPOINT } from '@src/resources/endpoint'
 import type {
+  AverageRatingResponse,
   FetchReviewsQueryParams,
   FetchReviewsResponse,
 } from '@src/types/Review'
@@ -16,6 +17,22 @@ export const fetchReviews = async (
 
   if (res.status !== 200) {
     throw new Error('Failed to fetch reviews')
+  }
+
+  return res.data
+}
+
+export const fetchAverageRating = async (
+  pageParam: FetchReviewsQueryParams
+): Promise<AverageRatingResponse> => {
+  const res = await axios<AverageRatingResponse>({
+    method: 'GET',
+    url: ENDPOINT.averageRating,
+    params: { ...pageParam },
+  })
+
+  if (res.status !== 200) {
+    throw new Error('Failed to fetch average rating')
   }
 
   return res.data

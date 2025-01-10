@@ -30,7 +30,7 @@ import CustomerReviewCard from '@src/components/admin/reviews/CustomerReviewCard
 import SwitchableDatepicker, {
   type HandleOnChangeDateValueType,
 } from '@src/components/datepicker/SwitchableDatepicker'
-import { fetchReviews } from '@src/services/ReviewService'
+import { fetchAverageRating, fetchReviews } from '@src/services/ReviewService'
 import { DATE_FORMAT } from '@src/resources/date'
 import { useAntdStore } from '@src/store/store'
 
@@ -53,7 +53,21 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
     initialPageParam: params,
     queryFn: ({ pageParam }) => fetchReviews(pageParam),
     getNextPageParam: () => undefined,
-    retry: false,
+    retry: 2,
+  })
+
+  const { data: averageRating } = useInfiniteQuery({
+    queryKey: [
+      'averageRating',
+      params.start_date,
+      params.end_date,
+      params.month,
+      params.year,
+    ],
+    initialPageParam: params,
+    queryFn: ({ pageParam }) => fetchAverageRating(pageParam),
+    getNextPageParam: () => undefined,
+    retry: 2,
   })
 
   const handleOnChangeDateValue = (e: HandleOnChangeDateValueType) => {
@@ -129,11 +143,13 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
             align="center"
             className="w-full justify-between pt-5"
           >
-            <TotalReview />
+            <TotalReview value={averageRating?.pages[0].total_review || 0} />
             <Divider className="border-gray-300 h-24" type="vertical" />
-            <AverageRating />
+            <AverageRating
+              value={averageRating?.pages[0].average_rating || 0}
+            />
             <Divider className="border-gray-300 h-24" type="vertical" />
-            <BarRating />
+            <BarRating {...averageRating?.pages[0]!} />
           </Flex>
 
           {/* Card list */}

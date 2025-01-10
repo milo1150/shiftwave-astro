@@ -1,5 +1,6 @@
 import { Flex, Progress, Typography } from 'antd'
 import { StarFilled } from '@ant-design/icons'
+import type { AverageRatingResponse } from '@src/types/Review'
 
 const { Text } = Typography
 
@@ -32,15 +33,35 @@ const BarValue: React.FC<SingleBarProps> = ({ score, percent, count }) => {
   )
 }
 
-const BarRating: React.FC = () => {
+const BarRating: React.FC<AverageRatingResponse> = (props) => {
   return (
     <>
       <Flex justify="center" className="w-1/3" vertical>
-        <BarValue score={5} percent={30} count={50000} />
-        <BarValue score={4} percent={30} count={20} />
-        <BarValue score={3} percent={40} count={200} />
-        <BarValue score={2} percent={60} count={34} />
-        <BarValue score={1} percent={90} count={1} />
+        <BarValue
+          score={5}
+          percent={props.five_star_percent}
+          count={props.five_star_count}
+        />
+        <BarValue
+          score={4}
+          percent={props.four_star_percent}
+          count={props.four_star_count}
+        />
+        <BarValue
+          score={3}
+          percent={props.three_star_percent}
+          count={props.three_star_count}
+        />
+        <BarValue
+          score={2}
+          percent={props.two_star_percent}
+          count={props.two_star_count}
+        />
+        <BarValue
+          score={1}
+          percent={props.one_star_percent}
+          count={props.one_star_count}
+        />
       </Flex>
     </>
   )
