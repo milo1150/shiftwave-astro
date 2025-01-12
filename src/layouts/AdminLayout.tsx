@@ -5,7 +5,7 @@ import React, { useState, type ReactNode } from 'react'
 import { MessageFilled, SettingFilled, MoonFilled } from '@ant-design/icons'
 import { Layout, Menu, ConfigProvider, theme } from 'antd'
 import { match } from 'ts-pattern'
-import { ROUTING, type ShiftwaveRoute } from '@src/react/route'
+import { ROUTING, type ShiftwaveRoute } from '@src/resources/route'
 import type { AvailableLanguage } from '@src/i18n/i18n'
 import { useAntdStore } from '@src/store/store'
 
