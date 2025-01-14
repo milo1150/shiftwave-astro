@@ -85,7 +85,10 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
       .otherwise(() => undefined)
 
     const year = match(e.type)
-      .with('year', () => dayjs(e.startDate).year())
+      .when(
+        (type) => type === 'month' || type === 'year',
+        () => dayjs(e.startDate).year()
+      )
       .otherwise(() => undefined)
 
     setParams((prev) => {
