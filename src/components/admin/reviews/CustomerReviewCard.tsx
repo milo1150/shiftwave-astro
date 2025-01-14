@@ -1,4 +1,4 @@
-import { Button, Card, Rate, Tooltip } from 'antd'
+import { Card, Rate, Tooltip } from 'antd'
 import { TranslationOutlined } from '@ant-design/icons'
 import type React from 'react'
 import '@src/style/custom-rate-el.css'
@@ -21,7 +21,6 @@ export const CustomerReviewCard: React.FC<Props> = ({
   lang,
 }) => {
   const [useDefaultLang, setUseDefaultLang] = useState<boolean>(true)
-  const [displayLang, setDisplayLang] = useState<LANG>(lang)
 
   return (
     <>
@@ -32,7 +31,7 @@ export const CustomerReviewCard: React.FC<Props> = ({
             <Tooltip title={`Switch to ${useDefaultLang ? 'EN' : lang}`}>
               <TranslationOutlined
                 className="text-xl pl-3 cursor-pointer"
-                onClick={(e) => setUseDefaultLang((v) => !v)}
+                onClick={() => setUseDefaultLang((v) => !v)}
               />
             </Tooltip>
           )}

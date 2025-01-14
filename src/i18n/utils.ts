@@ -1,4 +1,10 @@
-import { langJson, defaultLang, type AvailableLanguage } from '@src/i18n/i18n'
+import {
+  langJson,
+  defaultLang,
+  type AvailableLanguage,
+  type LANG,
+} from '@src/i18n/i18n'
+import { match } from 'ts-pattern'
 
 export function getLangFromUrl(url: URL) {
   const [, lang] = url.pathname.split('/')
@@ -18,3 +24,11 @@ export function useTranslations(lang: AvailableLanguage) {
 }
 
 export type i18KeyValue = keyof (typeof langJson)[typeof defaultLang]
+
+export function convertLangEnum(lang: AvailableLanguage): LANG {
+  return match<AvailableLanguage, LANG>(lang)
+    .with('th', () => 'TH')
+    .with('en', () => 'EN')
+    .with('my', () => 'MY')
+    .exhaustive()
+}

@@ -1,4 +1,4 @@
-import { useTranslations } from '@src/i18n/utils'
+import { convertLangEnum, useTranslations } from '@src/i18n/utils'
 import { Button, Card, ConfigProvider, Input, Rate } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import React, { useState } from 'react'
@@ -35,6 +35,7 @@ const ReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
       branch: branchId,
       score: reviewScore,
       remark: remark,
+      lang: convertLangEnum(lang),
     })
   }
 

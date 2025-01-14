@@ -1,3 +1,4 @@
+import type { LANG } from '@src/i18n/i18n'
 import { BASE_URL, ENDPOINT } from '@src/resources/endpoint'
 import type {
   AverageRatingResponse,
@@ -42,6 +43,7 @@ export const createReview = async (payload: {
   score: number
   branch: number
   remark: string
+  lang: LANG
 }): Promise<unknown> => {
   const res = await axios({
     method: 'POST',
