@@ -1,4 +1,5 @@
 import type { DatePickerType } from '@src/components/datepicker/SwitchableDatepicker'
+import type { LANG } from '@src/i18n/i18n'
 
 export type FetchReviewsQueryParams = {
   page?: number
@@ -23,6 +24,8 @@ export type Review = {
   updated_at: string
   remark: string
   score: number
+  remark_en: string
+  lang: LANG
 }
 
 export type AverageRatingResponse = {

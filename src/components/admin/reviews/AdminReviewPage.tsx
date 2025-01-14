@@ -167,6 +167,8 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
                         score={review.score}
                         remark={review.remark}
                         timestamp={review.created_at}
+                        remark_en={review.remark_en}
+                        lang={review.lang}
                       />
                     </Col>
                   )

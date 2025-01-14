@@ -20,3 +20,5 @@ export const langJson = {
     'rating.submit': 'บันทึก',
   },
 } as const
+
+export type LANG = 'TH' | 'EN' | 'MY'
