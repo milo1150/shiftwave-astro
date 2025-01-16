@@ -9,11 +9,36 @@ import {
   Input,
 } from 'antd'
 import { CheckOutlined, CloseOutlined, FilePdfTwoTone } from '@ant-design/icons'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { generatePDF } from '@src/services/PdfService'
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query'
+import {
+  createBrach,
+  fetchBranches,
+  updateBrach,
+} from '@src/services/BranchService'
+import type { Branch } from '@src/types/Branch'
 
 const { Text } = Typography
 
-const ExportPDF: React.FC = () => {
+type ExportPdfProps = {
+  branches: Branch[]
+}
+
+const ExportPDF: React.FC<ExportPdfProps> = ({ branches }) => {
+  const [branchId, setBranchId] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (branches.length > 0) {
+      setBranchId(branches[0].id)
+    }
+  }, [branches])
+
+  const generatePdfMutation = useMutation({
+    mutationFn: generatePDF,
+    retry: false,
+  })
+
   return (
     <>
       <Row className="w-full py-2 items-center justify-between">
@@ -21,16 +46,18 @@ const ExportPDF: React.FC = () => {
         <Row>
           <Select
             className="mr-2"
-            defaultValue="lucy"
-            style={{ width: 120 }}
-            options={[
-              { value: 'jack', label: 'Jack' },
-              { value: 'lucy', label: 'Lucy' },
-              { value: 'Yiminghe', label: 'yiminghe' },
-              { value: 'disabled', label: 'Disabled', disabled: true },
-            ]}
+            value={branchId}
+            style={{ width: 220 }}
+            onChange={(id) => setBranchId(id)}
+            options={branches?.map((branch) => {
+              return { value: branch.id, label: branch.name }
+            })}
           />
-          <Button type="primary" icon={<FilePdfTwoTone className="text-xl" />}>
+          <Button
+            type="primary"
+            icon={<FilePdfTwoTone className="text-xl" />}
+            onClick={() => branchId && generatePdfMutation.mutate({ branchId })}
+          >
             QRCode PDF
           </Button>
         </Row>
@@ -39,10 +66,25 @@ const ExportPDF: React.FC = () => {
   )
 }
 
-const Management: React.FC = () => {
+type BranchManagementProps = {
+  branches: Branch[]
+  refetchBranch: any
+}
+
+const BranchManagement: React.FC<BranchManagementProps> = ({
+  branches: branchesProp,
+  refetchBranch,
+}) => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const [displayBranchForm, setDisplayBranchForm] = useState(false)
-  const [branchName, setBranchName] = useState<string>()
+  const [branchName, setBranchName] = useState<string>('')
+  const [branches, setBranches] = useState<Branch[]>([])
+
+  useEffect(() => {
+    if (branchesProp.length > 0) {
+      setBranches([...branchesProp])
+    }
+  }, [branchesProp])
 
   const showDrawer = () => {
     setOpenDrawer(true)
@@ -62,6 +104,37 @@ const Management: React.FC = () => {
     setBranchName('')
     setDisplayBranchForm(false)
   }
+
+  const updateBranchStatus = useMutation({
+    mutationFn: updateBrach,
+    retry: false,
+  })
+
+  const onChangeBranchActiveStatus = (
+    v: boolean,
+    index: number,
+    branchId: number
+  ) => {
+    // Set local branches state
+    setBranches((prev) => {
+      const res = [...prev]
+      res[index].is_active = v
+      return res
+    })
+
+    // Send PATCH request
+    updateBranchStatus.mutate({ isActive: v, branchId })
+  }
+
+  const createBranch = useMutation({
+    mutationFn: createBrach,
+    retry: false,
+    onSuccess: () => {
+      setBranchName('')
+      setDisplayBranchForm(false)
+      refetchBranch()
+    },
+  })
 
   return (
     <>
@@ -85,17 +158,25 @@ const Management: React.FC = () => {
             </Space>
           }
         >
-          {/* TODO: loop branches */}
-          <Row className="justify-between">
-            <Text className="text-lg">Platong</Text>
-            <Switch
-              checkedChildren={<CheckOutlined />}
-              unCheckedChildren={<CloseOutlined />}
-              defaultChecked
-            />
-          </Row>
+          {/* Toggle Branch Status */}
+          {branches?.map((branch, index) => {
+            return (
+              <Row className="justify-between py-1">
+                <Text className="text-lg">{branch.name}</Text>
+                <Switch
+                  onChange={(v) =>
+                    onChangeBranchActiveStatus(v, index, branch.id)
+                  }
+                  value={branch.is_active}
+                  checkedChildren={<CheckOutlined />}
+                  unCheckedChildren={<CloseOutlined />}
+                  defaultChecked
+                />
+              </Row>
+            )
+          })}
 
-          {/* TODO: POST */}
+          {/* Create new branch form */}
           {displayBranchForm && (
             <Row className="justify-between pt-4 items-center">
               <Input
@@ -109,6 +190,9 @@ const Management: React.FC = () => {
                   type="primary"
                   className="w-16 mr-2"
                   disabled={!branchName}
+                  onClick={() =>
+                    createBranch.mutate({ branchName: branchName })
+                  }
                 >
                   Add
                 </Button>
@@ -129,10 +213,21 @@ const Management: React.FC = () => {
 }
 
 const BranchMenu: React.FC = () => {
+  const { data: branches, refetch: refetchBranch } = useInfiniteQuery({
+    queryKey: ['branches'],
+    queryFn: fetchBranches,
+    initialPageParam: '',
+    getNextPageParam: () => undefined,
+    retry: 2,
+  })
+
   return (
     <Row className="w-full">
-      <ExportPDF />
-      <Management />
+      <ExportPDF branches={branches?.pages[0] || []} />
+      <BranchManagement
+        branches={branches?.pages[0] || []}
+        refetchBranch={refetchBranch}
+      />
     </Row>
   )
 }
