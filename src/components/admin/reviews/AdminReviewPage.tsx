@@ -13,15 +13,21 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
+  type InfiniteData,
+  type QueryObserverResult,
 } from '@tanstack/react-query'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import { match } from 'ts-pattern'
 
 import type { DefaultPageProps } from '@src/types/DefaultType'
 import type React from 'react'
-import type { FetchReviewsQueryParams } from '@src/types/Review'
+import type {
+  AverageRatingResponse,
+  FetchReviewsQueryParams,
+  FetchReviewsResponse,
+} from '@src/types/Review'
 
 import TotalReview from '@src/components/admin/reviews/TotalReview'
 import AverageRating from '@src/components/admin/reviews/AverageRating'
@@ -33,11 +39,49 @@ import SwitchableDatepicker, {
 import { fetchAverageRating, fetchReviews } from '@src/services/ReviewService'
 import { DATE_FORMAT } from '@src/resources/date'
 import { useAntdStore } from '@src/store/store'
+import { ENDPOINT } from '@src/resources/endpoint'
+
+const { Text } = Typography
 
 dayjs.extend(weekOfYear)
 
 const queryClient = new QueryClient()
-const { Text } = Typography
+
+const reviewWebSocket = (
+  refetchReviews: () => Promise<
+    QueryObserverResult<InfiniteData<FetchReviewsResponse, unknown>, Error>
+  >,
+  refetchAverageRating: () => Promise<
+    QueryObserverResult<InfiniteData<AverageRatingResponse, unknown>, Error>
+  >
+) => {
+  useEffect(() => {
+    const socket = new WebSocket(`${ENDPOINT.wsReviews}`)
+
+    // Listen for messages from the server
+    socket.onmessage = (event) => {
+      const res = event.data
+      const parseRes = JSON.parse(res)
+
+      // Select only signal from Review Table
+      if (typeof parseRes === 'object') {
+        if (_.has(parseRes, 'update')) {
+          refetchReviews()
+          refetchAverageRating()
+        }
+      }
+    }
+
+    // Handle WebSocket close
+    socket.onclose = () => {
+      console.log('WebSocket connection closed')
+    }
+
+    return () => {
+      socket.close()
+    }
+  }, [])
+}
 
 const AdminReviewPage: React.FC<DefaultPageProps> = () => {
   const { darkTheme } = useAntdStore((state) => state)
@@ -48,7 +92,7 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
     start_date: dayjs().format(DATE_FORMAT.API),
   })
 
-  const { data: reviews } = useInfiniteQuery({
+  const { data: reviews, refetch: refetchReviews } = useInfiniteQuery({
     queryKey: ['reviews', params],
     initialPageParam: params,
     queryFn: ({ pageParam }) => fetchReviews(pageParam),
@@ -56,19 +100,23 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
     retry: 2,
   })
 
-  const { data: averageRating } = useInfiniteQuery({
-    queryKey: [
-      'averageRating',
-      params.start_date,
-      params.end_date,
-      params.month,
-      params.year,
-    ],
-    initialPageParam: params,
-    queryFn: ({ pageParam }) => fetchAverageRating(pageParam),
-    getNextPageParam: () => undefined,
-    retry: 2,
-  })
+  const { data: averageRating, refetch: refetchAverageRating } =
+    useInfiniteQuery({
+      queryKey: [
+        'averageRating',
+        params.start_date,
+        params.end_date,
+        params.month,
+        params.year,
+      ],
+      initialPageParam: params,
+      queryFn: ({ pageParam }) => fetchAverageRating(pageParam),
+      getNextPageParam: () => undefined,
+      retry: 2,
+    })
+
+  // Initialize WebSocket
+  reviewWebSocket(refetchReviews, refetchAverageRating)
 
   const handleOnChangeDateValue = (e: HandleOnChangeDateValueType) => {
     const startDate = match(e.type)
