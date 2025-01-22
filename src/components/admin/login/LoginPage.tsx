@@ -1,24 +1,36 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Flex,
-  ConfigProvider,
-  theme,
-} from 'antd'
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+} from '@tanstack/react-query'
+import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { Button, Form, Input, ConfigProvider, theme } from 'antd'
 
 import type { DefaultPageProps } from '@src/types/DefaultType'
 import type React from 'react'
 import { useAntdStore } from '@src/store/store'
+import { login, setJwtCookie } from '@src/services/UserService'
+import { trim } from 'lodash'
 
 const queryClient = new QueryClient()
 
 const LoginForm: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log('Received values of form: ', values)
+  const loginMutation = useMutation({
+    retry: false,
+    mutationFn: login,
+    onSuccess: (res) => {
+      setJwtCookie(res.token)
+    },
+  })
+
+  const onFinish = (values: { username: string; password: string }) => {
+    const { username, password } = values
+    const u = trim(username)
+    const pwd = trim(password)
+
+    if (u !== '' && pwd !== '') {
+      loginMutation.mutate({ u: username, pwd: password })
+    }
   }
 
   return (
