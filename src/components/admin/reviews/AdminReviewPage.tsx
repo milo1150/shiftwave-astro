@@ -210,7 +210,7 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
             className="overflow-y-auto overflow-x-hidden content-start customer-review-container"
             style={{ height: '75vh' }}
           >
-            {reviews?.pages.length
+            {reviews?.pages[0].items.length
               ? (reviews?.pages[0].items).map((review, i) => {
                   return (
                     <Col md={12} xl={8} xxl={6} className="pt-3 h-fit" key={i}>

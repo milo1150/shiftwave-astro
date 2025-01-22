@@ -1,4 +1,5 @@
 import type { LANG } from '@src/i18n/i18n'
+import axiosInstanceWithAuth from '@src/middleware/axios'
 import { ENDPOINT } from '@src/resources/endpoint'
 import type {
   AverageRatingResponse,
@@ -10,7 +11,7 @@ import axios from 'axios'
 export const fetchReviews = async (
   pageParam: FetchReviewsQueryParams
 ): Promise<FetchReviewsResponse> => {
-  const res = await axios<FetchReviewsResponse>({
+  const res = await axiosInstanceWithAuth<FetchReviewsResponse>({
     method: 'GET',
     url: ENDPOINT.reviews,
     params: { ...pageParam },

@@ -15,7 +15,7 @@ export async function login(payload: LoginPayload) {
 }
 
 export function setJwtCookie(token: string) {
-  const expire = dayjs().add(5, 'second').toString()
+  const expire = dayjs().add(1, 'day').toString()
   // TODO: depend on ENV
   const secure = true // Set to true for HTTPS
   document.cookie = `j=${token}; Path=/; Secure=${secure}; SameSite=Strict; expires=${expire}`
