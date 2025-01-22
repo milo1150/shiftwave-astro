@@ -1,0 +1,25 @@
+---
+import NoLayout from '@src/layouts/NoLayout.astro'
+import WrappedLoginPage from '@src/components/admin/login/LoginPage'
+import _ from 'lodash'
+import type { AvailableLanguage } from '@src/i18n/i18n'
+
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'en', section: 'login' } },
+    { params: { lang: 'th', section: 'login' } },
+  ]
+}
+
+const { lang, section } = Astro.params
+---
+
+<html lang={lang}>
+  <head>
+    <title>Shiftwave | Login</title>
+  </head>
+</html>
+
+<NoLayout>
+  <WrappedLoginPage client:only lang={lang as AvailableLanguage} />
+</NoLayout>

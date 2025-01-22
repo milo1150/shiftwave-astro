@@ -65,11 +65,9 @@ const AdminSettingPage: React.FC<DefaultPageProps> = () => {
 
 const WrappedAdminSettingPage: React.FC<DefaultPageProps> = (props) => {
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <AdminSettingPage {...props} />
-      </QueryClientProvider>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <AdminSettingPage {...props} />
+    </QueryClientProvider>
   )
 }
 
