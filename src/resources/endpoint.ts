@@ -13,4 +13,7 @@ export const ENDPOINT = {
 
   // ws
   wsReviews: `${WS_BASE_URL}reviews/m-ws`,
+
+  // sse
+  sseReviews: `${BASE_URL}reviews/sse`,
 } as const

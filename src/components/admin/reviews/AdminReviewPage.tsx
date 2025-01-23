@@ -13,6 +13,7 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
+  useQuery,
   type InfiniteData,
   type QueryObserverResult,
 } from '@tanstack/react-query'
@@ -36,7 +37,12 @@ import CustomerReviewCard from '@src/components/admin/reviews/CustomerReviewCard
 import SwitchableDatepicker, {
   type HandleOnChangeDateValueType,
 } from '@src/components/datepicker/SwitchableDatepicker'
-import { fetchAverageRating, fetchReviews } from '@src/services/ReviewService'
+import {
+  fetchAverageRating,
+  fetchReviews,
+  sseReviews,
+  webSocketReviews,
+} from '@src/services/ReviewService'
 import { DATE_FORMAT } from '@src/resources/date'
 import { useAntdStore } from '@src/store/store'
 import { ENDPOINT } from '@src/resources/endpoint'
@@ -46,42 +52,6 @@ const { Text } = Typography
 dayjs.extend(weekOfYear)
 
 const queryClient = new QueryClient()
-
-const reviewWebSocket = (
-  refetchReviews: () => Promise<
-    QueryObserverResult<InfiniteData<FetchReviewsResponse, unknown>, Error>
-  >,
-  refetchAverageRating: () => Promise<
-    QueryObserverResult<InfiniteData<AverageRatingResponse, unknown>, Error>
-  >
-) => {
-  useEffect(() => {
-    const socket = new WebSocket(`${ENDPOINT.wsReviews}`)
-
-    // Listen for messages from the server
-    socket.onmessage = (event) => {
-      const res = event.data
-      const parseRes = JSON.parse(res)
-
-      // Select only signal from Review Table
-      if (typeof parseRes === 'object') {
-        if (_.has(parseRes, 'update')) {
-          refetchReviews()
-          refetchAverageRating()
-        }
-      }
-    }
-
-    // Handle WebSocket close
-    socket.onclose = () => {
-      console.log('WebSocket connection closed')
-    }
-
-    return () => {
-      socket.close()
-    }
-  }, [])
-}
 
 const AdminReviewPage: React.FC<DefaultPageProps> = () => {
   const { darkTheme } = useAntdStore((state) => state)
@@ -115,8 +85,15 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
       retry: 2,
     })
 
-  // Initialize WebSocket
-  reviewWebSocket(refetchReviews, refetchAverageRating)
+  // WebSocket - realtime fetching review list
+  // useEffect(() => {
+  //   webSocketReviews(refetchReviews, refetchAverageRating)
+  // }, [])
+
+  // SSE - realtime fetching review list
+  useEffect(() => {
+    sseReviews(refetchReviews, refetchAverageRating)
+  }, [])
 
   const handleOnChangeDateValue = (e: HandleOnChangeDateValueType) => {
     const startDate = match(e.type)

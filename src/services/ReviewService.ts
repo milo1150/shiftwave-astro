@@ -6,7 +6,9 @@ import type {
   FetchReviewsQueryParams,
   FetchReviewsResponse,
 } from '@src/types/Review'
+import type { QueryObserverResult, InfiniteData } from '@tanstack/react-query'
 import axios from 'axios'
+import { has } from 'lodash'
 
 export const fetchReviews = async (
   pageParam: FetchReviewsQueryParams
@@ -27,7 +29,7 @@ export const fetchReviews = async (
 export const fetchAverageRating = async (
   pageParam: FetchReviewsQueryParams
 ): Promise<AverageRatingResponse> => {
-  const res = await axios<AverageRatingResponse>({
+  const res = await axiosInstanceWithAuth<AverageRatingResponse>({
     method: 'GET',
     url: ENDPOINT.averageRating,
     params: { ...pageParam },
@@ -57,4 +59,70 @@ export const createReview = async (payload: {
   }
 
   return res.data
+}
+
+export function webSocketReviews(
+  refetchReviews: () => Promise<
+    QueryObserverResult<InfiniteData<FetchReviewsResponse, unknown>, Error>
+  >,
+  refetchAverageRating: () => Promise<
+    QueryObserverResult<InfiniteData<AverageRatingResponse, unknown>, Error>
+  >
+) {
+  const socket = new WebSocket(`${ENDPOINT.wsReviews}`)
+
+  // Listen for messages from the server
+  socket.onmessage = (event) => {
+    const res = event.data
+    const parseRes = JSON.parse(res)
+
+    // Select only signal from Review Table
+    if (typeof parseRes === 'object') {
+      if (has(parseRes, 'update')) {
+        refetchReviews()
+        refetchAverageRating()
+      }
+    }
+  }
+
+  // Handle WebSocket close
+  socket.onclose = () => {
+    console.log('WebSocket connection closed')
+  }
+
+  return () => {
+    socket.close()
+  }
+}
+
+export function sseReviews(
+  refetchReviews: () => Promise<
+    QueryObserverResult<InfiniteData<FetchReviewsResponse, unknown>, Error>
+  >,
+  refetchAverageRating: () => Promise<
+    QueryObserverResult<InfiniteData<AverageRatingResponse, unknown>, Error>
+  >
+) {
+  const eventSource = new EventSource(ENDPOINT.sseReviews)
+
+  // Handle incoming messages
+  eventSource.onmessage = async (event) => {
+    const data = JSON.parse(event.data)
+    if (has(data, 'update') && (data as { update: boolean }).update) {
+      await refetchReviews()
+      await refetchAverageRating()
+    }
+  }
+
+  // Handle errors (optional logging or reconnection logic could go here)
+  eventSource.onerror = (error) => {
+    console.error('SSE Error:', error)
+    eventSource.close()
+  }
+
+  // Cleanup function to close the SSE connection
+  return () => {
+    eventSource.close()
+    console.log('SSE connection closed')
+  }
 }
