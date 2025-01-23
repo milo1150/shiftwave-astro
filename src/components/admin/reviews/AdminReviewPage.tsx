@@ -13,9 +13,6 @@ import {
   QueryClient,
   QueryClientProvider,
   useInfiniteQuery,
-  useQuery,
-  type InfiniteData,
-  type QueryObserverResult,
 } from '@tanstack/react-query'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { useEffect, useState } from 'react'
@@ -24,11 +21,7 @@ import { match } from 'ts-pattern'
 
 import type { DefaultPageProps } from '@src/types/DefaultType'
 import type React from 'react'
-import type {
-  AverageRatingResponse,
-  FetchReviewsQueryParams,
-  FetchReviewsResponse,
-} from '@src/types/Review'
+import type { FetchReviewsQueryParams } from '@src/types/Review'
 
 import TotalReview from '@src/components/admin/reviews/TotalReview'
 import AverageRating from '@src/components/admin/reviews/AverageRating'
@@ -45,7 +38,6 @@ import {
 } from '@src/services/ReviewService'
 import { DATE_FORMAT } from '@src/resources/date'
 import { useAntdStore } from '@src/store/store'
-import { ENDPOINT } from '@src/resources/endpoint'
 
 const { Text } = Typography
 

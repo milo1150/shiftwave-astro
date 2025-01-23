@@ -10,9 +10,9 @@ import type { QueryObserverResult, InfiniteData } from '@tanstack/react-query'
 import axios from 'axios'
 import { has } from 'lodash'
 
-export const fetchReviews = async (
+export async function fetchReviews(
   pageParam: FetchReviewsQueryParams
-): Promise<FetchReviewsResponse> => {
+): Promise<FetchReviewsResponse> {
   const res = await axiosInstanceWithAuth<FetchReviewsResponse>({
     method: 'GET',
     url: ENDPOINT.reviews,
@@ -26,9 +26,9 @@ export const fetchReviews = async (
   return res.data
 }
 
-export const fetchAverageRating = async (
+export async function fetchAverageRating(
   pageParam: FetchReviewsQueryParams
-): Promise<AverageRatingResponse> => {
+): Promise<AverageRatingResponse> {
   const res = await axiosInstanceWithAuth<AverageRatingResponse>({
     method: 'GET',
     url: ENDPOINT.averageRating,
@@ -42,12 +42,12 @@ export const fetchAverageRating = async (
   return res.data
 }
 
-export const createReview = async (payload: {
+export async function createReview(payload: {
   score: number
   branch: number
   remark: string
   lang: LANG
-}): Promise<unknown> => {
+}): Promise<unknown> {
   const res = await axios({
     method: 'POST',
     url: ENDPOINT.review,
