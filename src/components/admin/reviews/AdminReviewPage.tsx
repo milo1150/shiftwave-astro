@@ -77,14 +77,12 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
       retry: 2,
     })
 
-  // WebSocket - realtime fetching review list
-  // useEffect(() => {
-  //   webSocketReviews(refetchReviews, refetchAverageRating)
-  // }, [])
-
-  // SSE - realtime fetching review list
   useEffect(() => {
+    // SSE - realtime fetching review list
     sseReviews(refetchReviews, refetchAverageRating)
+
+    // WebSocket - realtime fetching review list
+    // webSocketReviews(refetchReviews, refetchAverageRating)
   }, [])
 
   const handleOnChangeDateValue = (e: HandleOnChangeDateValueType) => {

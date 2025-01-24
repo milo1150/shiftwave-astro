@@ -105,12 +105,22 @@ export function sseReviews(
 ) {
   const eventSource = new EventSource(ENDPOINT.sseReviews)
 
-  // Handle incoming messages
-  eventSource.onmessage = async (event) => {
+  // Track the status of refetching to avoid overlapping calls
+  let isFetching = false
+
+  eventSource.onmessage = (event) => {
     const data = JSON.parse(event.data)
     if (has(data, 'update') && (data as { update: boolean }).update) {
-      await refetchReviews()
-      await refetchAverageRating()
+      if (!isFetching) {
+        isFetching = true // Prevent overlapping refetches
+        Promise.all([refetchReviews(), refetchAverageRating()])
+          .catch((error) => {
+            console.error('Error during refetch:', error)
+          })
+          .finally(() => {
+            isFetching = false // Reset fetch status
+          })
+      }
     }
   }
 
