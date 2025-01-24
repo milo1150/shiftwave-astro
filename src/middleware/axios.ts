@@ -1,12 +1,5 @@
+import { getCookieByKey } from '@src/utils/env'
 import axios from 'axios'
-
-// Get the JWT token from storage (localStorage, cookies, etc.)
-function getToken(): string {
-  const cookies = document.cookie.split('; ')
-  const tokenCookie = cookies.find((row) => row.startsWith('j='))
-  const jwtToken = tokenCookie ? tokenCookie.split('=')[1] : null
-  return jwtToken || ''
-}
 
 // Create an Axios instance
 const axiosInstanceWithAuth = axios.create()
@@ -14,7 +7,7 @@ const axiosInstanceWithAuth = axios.create()
 // Add a request interceptor
 axiosInstanceWithAuth.interceptors.request.use(
   (config) => {
-    const token = getToken()
+    const token = getCookieByKey('j')
 
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`

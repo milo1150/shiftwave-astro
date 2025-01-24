@@ -1,9 +1,9 @@
+import axiosInstanceWithAuth from '@src/middleware/axios'
 import { ENDPOINT } from '@src/resources/endpoint'
 import type { Branch } from '@src/types/Branch'
-import axios from 'axios'
 
 export const fetchBranches = async (): Promise<Branch[]> => {
-  const res = await axios<Branch[]>({
+  const res = await axiosInstanceWithAuth<Branch[]>({
     method: 'GET',
     url: ENDPOINT.branches,
   })
@@ -19,7 +19,7 @@ export const updateBrach = async (payload: {
   isActive: boolean
   branchId: number
 }): Promise<void> => {
-  const res = await axios({
+  const res = await axiosInstanceWithAuth({
     method: 'PATCH',
     url: `${ENDPOINT.branch}/${payload.branchId}`,
     data: { is_active: payload.isActive },
@@ -33,7 +33,7 @@ export const updateBrach = async (payload: {
 export const createBrach = async (payload: {
   branchName: string
 }): Promise<void> => {
-  const res = await axios({
+  const res = await axiosInstanceWithAuth({
     method: 'POST',
     url: `${ENDPOINT.branch}`,
     data: { branch_name: payload.branchName },
