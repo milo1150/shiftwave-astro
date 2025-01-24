@@ -9,6 +9,8 @@ import type {
 import type { QueryObserverResult, InfiniteData } from '@tanstack/react-query'
 import axios from 'axios'
 import { has } from 'lodash'
+import { fetchEventSource } from '@microsoft/fetch-event-source'
+import { getCookieByKey } from '@src/utils/env'
 
 export async function fetchReviews(
   pageParam: FetchReviewsQueryParams
@@ -103,36 +105,35 @@ export function sseReviews(
     QueryObserverResult<InfiniteData<AverageRatingResponse, unknown>, Error>
   >
 ) {
-  const eventSource = new EventSource(ENDPOINT.sseReviews)
-
   // Track the status of refetching to avoid overlapping calls
   let isFetching = false
 
-  eventSource.onmessage = (event) => {
-    const data = JSON.parse(event.data)
-    if (has(data, 'update') && (data as { update: boolean }).update) {
-      if (!isFetching) {
-        isFetching = true // Prevent overlapping refetches
-        Promise.all([refetchReviews(), refetchAverageRating()])
-          .catch((error) => {
-            console.error('Error during refetch:', error)
-          })
-          .finally(() => {
-            isFetching = false // Reset fetch status
-          })
+  fetchEventSource(ENDPOINT.sseReviews, {
+    headers: {
+      Authorization: `Bearer ${getCookieByKey('j')}`,
+    },
+    onmessage(event) {
+      const data = JSON.parse(event.data)
+      if (has(data, 'update') && (data as { update: boolean }).update) {
+        if (!isFetching) {
+          isFetching = true
+          Promise.all([refetchReviews(), refetchAverageRating()])
+            .catch((error) => {
+              console.error('Error during refetch:', error)
+            })
+            .finally(() => {
+              isFetching = false
+            })
+        }
       }
-    }
-  }
-
-  // Handle errors (optional logging or reconnection logic could go here)
-  eventSource.onerror = (error) => {
-    console.error('SSE Error:', error)
-    eventSource.close()
-  }
+    },
+    onerror(error) {
+      console.error('SSE Error:', error)
+    },
+  })
 
   // Cleanup function to close the SSE connection
   return () => {
-    eventSource.close()
     console.log('SSE connection closed')
   }
 }
