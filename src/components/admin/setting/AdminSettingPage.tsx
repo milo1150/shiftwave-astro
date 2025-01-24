@@ -12,6 +12,7 @@ import {
 import type React from 'react'
 import { useAntdStore } from '@src/store/store'
 import BranchMenu from '@src/components/admin/setting/BranchMenu'
+import { AdminGuard } from '@src/auth/AuthGuard'
 
 const queryClient = new QueryClient()
 
@@ -65,9 +66,11 @@ const AdminSettingPage: React.FC<DefaultPageProps> = () => {
 
 const WrappedAdminSettingPage: React.FC<DefaultPageProps> = (props) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AdminSettingPage {...props} />
-    </QueryClientProvider>
+    <AdminGuard>
+      <QueryClientProvider client={queryClient}>
+        <AdminSettingPage {...props} />
+      </QueryClientProvider>
+    </AdminGuard>
   )
 }
 

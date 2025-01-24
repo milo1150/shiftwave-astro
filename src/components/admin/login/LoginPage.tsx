@@ -10,16 +10,34 @@ import type { DefaultPageProps } from '@src/types/DefaultType'
 import type React from 'react'
 import { useAntdStore } from '@src/store/store'
 import { login, setJwtCookie } from '@src/services/UserService'
-import { trim } from 'lodash'
+import _, { trim } from 'lodash'
+import { LoginGuard } from '@src/auth/AuthGuard'
+import { reviewsUrl } from '@src/utils/location'
+import { useState } from 'react'
 
 const queryClient = new QueryClient()
 
 const LoginForm: React.FC = () => {
+  const [displayErrorMsg, setDisplayErrorMsg] = useState<boolean>(false)
+  const [errorCount, setErrorCount] = useState<number>(0)
+
   const loginMutation = useMutation({
     retry: false,
     mutationFn: login,
     onSuccess: (res) => {
+      // Handle error message
+      setDisplayErrorMsg(false)
+      setErrorCount(0)
+
+      // Set login token in cookie
       setJwtCookie(res.token)
+
+      // Redirect to main admin page
+      window.location.href = reviewsUrl()
+    },
+    onError: () => {
+      setDisplayErrorMsg(true)
+      setErrorCount((prev) => (prev += 1))
     },
   })
 
@@ -40,17 +58,20 @@ const LoginForm: React.FC = () => {
       onFinish={onFinish}
       className="w-1/6"
     >
+      {/* Username */}
       <Form.Item
         name="username"
-        rules={[{ required: true, message: 'Please input your Username!' }]}
-        className="pb-1"
+        rules={[{ required: true, message: '' }]}
+        className="mb-3"
       >
         <Input prefix={<UserOutlined />} placeholder="Username" />
       </Form.Item>
+
+      {/* Password */}
       <Form.Item
         name="password"
-        rules={[{ required: true, message: 'Please input your Password!' }]}
-        className="pb-1"
+        rules={[{ required: true, message: '' }]}
+        className="mb-3"
       >
         <Input
           prefix={<LockOutlined />}
@@ -59,6 +80,14 @@ const LoginForm: React.FC = () => {
         />
       </Form.Item>
 
+      {/* Error message */}
+      {displayErrorMsg && (
+        <p className="mb-2 text-red-500 text-center">
+          try again ... ({errorCount !== 0 && errorCount})
+        </p>
+      )}
+
+      {/* Login Button */}
       <Form.Item>
         <Button block type="primary" htmlType="submit">
           Log in
@@ -68,9 +97,7 @@ const LoginForm: React.FC = () => {
   )
 }
 
-interface Props {}
-
-const LoginPage: React.FC<Props> = () => {
+const LoginPage: React.FC<DefaultPageProps> = () => {
   const { darkTheme } = useAntdStore((state) => state)
   return (
     <ConfigProvider
@@ -89,9 +116,11 @@ const LoginPage: React.FC<Props> = () => {
 
 const WrappedLoginPage: React.FC<DefaultPageProps> = (props) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <LoginPage {...props} />
-    </QueryClientProvider>
+    <LoginGuard>
+      <QueryClientProvider client={queryClient}>
+        <LoginPage {...props} />
+      </QueryClientProvider>
+    </LoginGuard>
   )
 }
 

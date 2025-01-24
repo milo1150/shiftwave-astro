@@ -2,12 +2,18 @@ import '@src/style/global.css'
 import '@src/style/tailwind.css'
 
 import React, { useState, type ReactNode } from 'react'
-import { MessageFilled, SettingFilled, MoonFilled } from '@ant-design/icons'
+import {
+  MessageFilled,
+  SettingFilled,
+  MoonFilled,
+  LogoutOutlined,
+} from '@ant-design/icons'
 import { Layout, Menu, ConfigProvider, theme } from 'antd'
 import { match } from 'ts-pattern'
 import { ROUTING, type ShiftwaveRoute } from '@src/resources/route'
 import type { AvailableLanguage } from '@src/i18n/i18n'
 import { useAntdStore } from '@src/store/store'
+import { logout } from '@src/auth/AuthGuard'
 
 type Props = {
   children: ReactNode
@@ -60,6 +66,10 @@ const AdminLayout: React.FC<Props> = ({ children, lang, routeMenu }) => {
                   (type) => type === 'darktheme',
                   () => toggleDarkTheme()
                 )
+                .when(
+                  (type) => type === 'logout',
+                  () => logout()
+                )
                 .run()
             }}
             items={[
@@ -77,6 +87,11 @@ const AdminLayout: React.FC<Props> = ({ children, lang, routeMenu }) => {
                 key: 'darktheme',
                 icon: <MoonFilled />,
                 label: 'Dark theme',
+              },
+              {
+                key: 'logout',
+                icon: <LogoutOutlined />,
+                label: 'Logout',
               },
             ]}
           />

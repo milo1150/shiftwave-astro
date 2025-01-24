@@ -1,10 +1,12 @@
 ---
+import _ from 'lodash'
+
 import AdminLayout from '@src/layouts/AdminLayout'
 import WrappedAdminReviewPage from '@src/components/admin/reviews/AdminReviewPage'
 import WrapperAdminSettingPage from '@src/components/admin/setting/AdminSettingPage'
+
 import type { ShiftwaveRoute } from '@src/resources/route'
 import type { AvailableLanguage } from '@src/i18n/i18n'
-import _ from 'lodash'
 import { ClientRouter } from 'astro:transitions'
 
 export function getStaticPaths() {

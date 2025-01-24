@@ -38,6 +38,7 @@ import {
 } from '@src/services/ReviewService'
 import { DATE_FORMAT } from '@src/resources/date'
 import { useAntdStore } from '@src/store/store'
+import { AdminGuard } from '@src/auth/AuthGuard'
 
 const { Text } = Typography
 
@@ -212,9 +213,11 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
 
 const WrappedAdminReviewPage: React.FC<DefaultPageProps> = (props) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AdminReviewPage {...props} />
-    </QueryClientProvider>
+    <AdminGuard>
+      <QueryClientProvider client={queryClient}>
+        <AdminReviewPage {...props} />
+      </QueryClientProvider>
+    </AdminGuard>
   )
 }
 
