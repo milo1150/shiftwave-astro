@@ -58,6 +58,10 @@ const UserReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
     checkRateLimitMutation.mutate()
   }, [])
 
+  if (checkRateLimitMutation.isPending) {
+    return null
+  }
+
   if (isRateLimit) {
     return (
       <div className="h-full content-center place-items-center">
