@@ -35,6 +35,9 @@ const UserReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
   const createReviewMutation = useMutation({
     mutationFn: createReview,
     retry: false,
+    onSuccess: () => {
+      setIsRateLimit(true)
+    },
   })
 
   const onClickCreate = () => {
@@ -56,7 +59,11 @@ const UserReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
   }, [])
 
   if (isRateLimit) {
-    return null
+    return (
+      <div className="h-full content-center place-items-center">
+        <img src="/src/assets/images/thx.png" alt="Thank you" />
+      </div>
+    )
   }
 
   return (
