@@ -137,3 +137,7 @@ export function sseReviews(
     console.log('SSE connection closed')
   }
 }
+
+export async function checkReviewRateLimit() {
+  return await axios.get(ENDPOINT.reviewLimit)
+}

@@ -1,20 +1,36 @@
 import { convertLangEnum, useTranslations } from '@src/i18n/utils'
 import { Button, Card, ConfigProvider, Input, Rate } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { createReview } from '@src/services/ReviewService'
+import { checkReviewRateLimit, createReview } from '@src/services/ReviewService'
 import type { DefaultPageProps } from '@src/types/DefaultType'
+import type { AxiosError } from 'axios'
 
 export interface Props extends DefaultPageProps {
   branchId: number | null
 }
 
-const ReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
+const UserReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
   const t = useTranslations(lang)
 
+  const [isRateLimit, setIsRateLimit] = useState<boolean>(true)
   const [reviewScore, setReviewScore] = useState<number>(0)
   const [remark, setRemark] = useState<string>('')
+
+  const checkRateLimitMutation = useMutation({
+    mutationFn: checkReviewRateLimit,
+    retry: false,
+    onSuccess: () => {
+      setIsRateLimit(false)
+    },
+    onError: (err: AxiosError) => {
+      console.log(err.status)
+      if (err.status !== 429) {
+        setIsRateLimit(true)
+      }
+    },
+  })
 
   const createReviewMutation = useMutation({
     mutationFn: createReview,
@@ -33,6 +49,14 @@ const ReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
       remark: remark,
       lang: convertLangEnum(lang),
     })
+  }
+
+  useEffect(() => {
+    checkRateLimitMutation.mutate()
+  }, [])
+
+  if (isRateLimit) {
+    return null
   }
 
   return (
@@ -97,4 +121,4 @@ const ReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
   )
 }
 
-export default ReviewComponent
+export default UserReviewComponent

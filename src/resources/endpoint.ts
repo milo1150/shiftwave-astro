@@ -11,6 +11,9 @@ export const ENDPOINT = {
   generatePDF: `${REAL_BASE_URL}generate-pdf`,
   login: `${BASE_URL}user/login`,
 
+  // ratelimit
+  reviewLimit: `${BASE_URL}review/limit`,
+
   // ws
   wsReviews: `${WS_BASE_URL}reviews/m-ws`,
 
