@@ -1,4 +1,6 @@
+import { logout } from '@src/auth/AuthGuard'
 import { getCookieByKey } from '@src/utils/env'
+import { loginUrl } from '@src/utils/location'
 import axios from 'axios'
 
 // Create an Axios instance
@@ -26,8 +28,10 @@ axiosInstanceWithAuth.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Handle unauthorized errors (e.g., redirect to login)
       console.error('Unauthorized: Redirecting to login.')
+
+      // Force logout
+      logout()
     }
     return Promise.reject(error)
   }
