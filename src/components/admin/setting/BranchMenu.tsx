@@ -105,25 +105,17 @@ const BranchManagement: React.FC<BranchManagementProps> = ({
     setDisplayBranchForm(false)
   }
 
-  const updateBranchStatus = useMutation({
+  const updateBranchStatusMutation = useMutation({
     mutationFn: updateBrach,
     retry: false,
+    onSuccess: () => {
+      refetchBranch()
+    },
   })
 
-  const onChangeBranchActiveStatus = (
-    v: boolean,
-    index: number,
-    branchId: number
-  ) => {
-    // Set local branches state
-    setBranches((prev) => {
-      const res = [...prev]
-      res[index].is_active = v
-      return res
-    })
-
+  const onChangeBranchActiveStatus = (status: boolean, branchId: number) => {
     // Send PATCH request
-    updateBranchStatus.mutate({ isActive: v, branchId })
+    updateBranchStatusMutation.mutate({ isActive: status, branchId })
   }
 
   const createBranch = useMutation({
@@ -164,9 +156,10 @@ const BranchManagement: React.FC<BranchManagementProps> = ({
               <Row className="justify-between py-1">
                 <Text className="text-lg">{branch.name}</Text>
                 <Switch
-                  onChange={(v) =>
-                    onChangeBranchActiveStatus(v, index, branch.id)
-                  }
+                  onChange={(v, e) => {
+                    e.preventDefault()
+                    onChangeBranchActiveStatus(v, branch.id)
+                  }}
                   value={branch.is_active}
                   checkedChildren={<CheckOutlined />}
                   unCheckedChildren={<CloseOutlined />}
