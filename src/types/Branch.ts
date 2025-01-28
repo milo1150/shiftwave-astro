@@ -1,7 +1,7 @@
 export type Branch = {
-  id: number
   name: string
   is_active: boolean
+  uuid: string
 }
 
 export type UpdateBranch = {

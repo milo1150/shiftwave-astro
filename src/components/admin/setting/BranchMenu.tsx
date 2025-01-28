@@ -26,11 +26,11 @@ type ExportPdfProps = {
 }
 
 const ExportPDF: React.FC<ExportPdfProps> = ({ branches }) => {
-  const [branchId, setBranchId] = useState<number | null>(null)
+  const [branchUuid, setBranchUuid] = useState<string>('')
 
   useEffect(() => {
     if (branches.length > 0) {
-      setBranchId(branches[0].id)
+      setBranchUuid(branches[0].uuid)
     }
   }, [branches])
 
@@ -46,17 +46,19 @@ const ExportPDF: React.FC<ExportPdfProps> = ({ branches }) => {
         <Row>
           <Select
             className="mr-2"
-            value={branchId}
+            value={branchUuid}
             style={{ width: 220 }}
-            onChange={(id) => setBranchId(id)}
+            onChange={(id) => setBranchUuid(id)}
             options={branches?.map((branch) => {
-              return { value: branch.id, label: branch.name }
+              return { value: branch.uuid, label: branch.name }
             })}
           />
           <Button
             type="primary"
             icon={<FilePdfTwoTone className="text-xl" />}
-            onClick={() => branchId && generatePdfMutation.mutate({ branchId })}
+            onClick={() =>
+              branchUuid && generatePdfMutation.mutate({ branchUuid })
+            }
           >
             QRCode PDF
           </Button>
@@ -113,9 +115,9 @@ const BranchManagement: React.FC<BranchManagementProps> = ({
     },
   })
 
-  const onChangeBranchActiveStatus = (status: boolean, branchId: number) => {
+  const onChangeBranchActiveStatus = (status: boolean, branchUuid: string) => {
     // Send PATCH request
-    updateBranchStatusMutation.mutate({ isActive: status, branchId })
+    updateBranchStatusMutation.mutate({ isActive: status, branchUuid })
   }
 
   const createBranch = useMutation({
@@ -158,7 +160,7 @@ const BranchManagement: React.FC<BranchManagementProps> = ({
                 <Switch
                   onChange={(v, e) => {
                     e.preventDefault()
-                    onChangeBranchActiveStatus(v, branch.id)
+                    onChangeBranchActiveStatus(v, branch.uuid)
                   }}
                   value={branch.is_active}
                   checkedChildren={<CheckOutlined />}

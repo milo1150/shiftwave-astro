@@ -17,11 +17,11 @@ export const fetchBranches = async (): Promise<Branch[]> => {
 
 export const updateBrach = async (payload: {
   isActive: boolean
-  branchId: number
+  branchUuid: string
 }): Promise<void> => {
   const res = await axiosInstanceWithAuth({
     method: 'PATCH',
-    url: `${ENDPOINT.branch}/${payload.branchId}`,
+    url: `${ENDPOINT.branch}/${payload.branchUuid}`,
     data: { is_active: payload.isActive },
   })
 
