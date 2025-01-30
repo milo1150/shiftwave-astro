@@ -9,7 +9,7 @@ export const ENDPOINT = {
   branches: `${BASE_URL}branches`,
   averageRating: `${BASE_URL}reviews/average-rating`,
   generatePDF: `${REAL_BASE_URL}generate-pdf`,
-  login: `${BASE_URL}user/login`,
+  login: `${BASE_URL}login`,
 
   // ratelimit
   reviewLimit: `${BASE_URL}review/limit`,
