@@ -1,6 +1,6 @@
 import { transformUpdateUserPayload } from '@src/dto/User'
-import { fetchUsers, updateUsers } from '@src/services/UserService'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { fetchUsers } from '@src/services/UserService'
+import { useQuery } from '@tanstack/react-query'
 import { Button, Divider, Row } from 'antd'
 import { UserAddOutlined } from '@ant-design/icons'
 import type { DefaultOptionType } from 'antd/es/select'
@@ -13,36 +13,24 @@ type UserMenuProps = {
   componentKey: string
 }
 
-const UserMenu: React.FC<UserMenuProps> = ({ componentKey }) => {
-  // Const
-  const roleOptions: DefaultOptionType[] = [
-    { label: 'admin', value: 'admin' },
-    { label: 'user', value: 'user' },
-  ]
+const roleOptions: DefaultOptionType[] = [
+  { label: 'admin', value: 'admin' },
+  { label: 'user', value: 'user' },
+]
 
+const UserMenu: React.FC<UserMenuProps> = ({ componentKey }) => {
   // Query
   const { data: userDatas, refetch: refetchUsers } = useQuery({
     queryKey: ['user'],
     queryFn: fetchUsers,
   })
-  const updateUsersMutation = useMutation({
-    mutationFn: updateUsers,
-    onSuccess: () => {
-      refetchUsers()
-    },
-  })
 
   // Users form
-  const { userForm, setUserForm, transformUsersForm } = useUserForm({
-    userDatas,
-  })
-
-  useEffect(() => {
-    if (componentKey === 'user') {
-      refetchUsers()
-      transformUsersForm(userDatas || [])
-    }
-  }, [componentKey])
+  const { userForm, setUserForm, transformUsersForm, updateUsersMutation } =
+    useUserForm({
+      userDatas,
+      refetchUsers,
+    })
 
   // Create User
   const {
@@ -53,6 +41,14 @@ const UserMenu: React.FC<UserMenuProps> = ({ componentKey }) => {
     onCancelCreateUser,
     createUserMutation,
   } = useCreateUser({ createSuccessCallback: refetchUsers })
+
+  // OnMount
+  useEffect(() => {
+    if (componentKey === 'user') {
+      refetchUsers()
+      transformUsersForm(userDatas || [])
+    }
+  }, [componentKey])
 
   return (
     <>

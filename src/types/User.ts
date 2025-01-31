@@ -1,5 +1,6 @@
 import type { DefaultOptionType } from 'antd/es/select'
 
+export type UserRole = 'admin' | 'user'
 export type LoginResponse = {
   token: string
 }
@@ -27,7 +28,7 @@ export type TransformUserDetail = {
   user_uuid: string
   username: string
   active_status: boolean
-  role: string
+  role: UserRole
   branches: DefaultOptionType[]
 }
 
@@ -41,6 +42,6 @@ export type UpdateUserPayload = {
 export type CreateUserPayload = {
   u: string
   pwd: string
-  role: 'admin' | 'user'
+  role: UserRole
   branches: string[]
 }

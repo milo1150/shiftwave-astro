@@ -29,11 +29,12 @@ export const UserForm: React.FC<UserFormProps> = ({
             <div>
               <Switch
                 className="mr-2"
-                value={user.active_status}
-                onChange={(v) => {
+                value={user.role === 'admin' ? true : user.active_status}
+                disabled={user.role === 'admin'}
+                onChange={(activeStatus) => {
                   setUserForm((prev) => {
                     const updatedUsers = [...prev]
-                    updatedUsers[rowIndex].active_status = v
+                    updatedUsers[rowIndex].active_status = activeStatus
                     return updatedUsers
                   })
                 }}

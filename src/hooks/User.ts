@@ -1,11 +1,15 @@
 import { transformUserDetail } from '@src/dto/User'
-import { createUser } from '@src/services/UserService'
+import { createUser, updateUsers } from '@src/services/UserService'
 import type {
   CreateUserPayload,
   TransformUserDetail,
   UserDetail,
 } from '@src/types/User'
-import { useMutation } from '@tanstack/react-query'
+import {
+  useMutation,
+  type QueryObserverResult,
+  type RefetchOptions,
+} from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
 const defaultCreateUserForm: CreateUserPayload = {
@@ -16,7 +20,9 @@ const defaultCreateUserForm: CreateUserPayload = {
 } as const
 
 type UseCreateUserProps = {
-  createSuccessCallback: () => void
+  createSuccessCallback: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<UserDetail[], Error>>
 }
 
 export const useCreateUser = ({
@@ -54,10 +60,20 @@ export const useCreateUser = ({
 
 type UseUserFormProps = {
   userDatas: UserDetail[] | undefined
+  refetchUsers: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<UserDetail[], Error>>
 }
 
-export const useUserForm = ({ userDatas }: UseUserFormProps) => {
+export const useUserForm = ({ userDatas, refetchUsers }: UseUserFormProps) => {
   const [userForm, setUserForm] = useState<TransformUserDetail[]>([])
+
+  const updateUsersMutation = useMutation({
+    mutationFn: updateUsers,
+    onSuccess: () => {
+      refetchUsers()
+    },
+  })
 
   const transformUsersForm = (datas: UserDetail[]) => {
     datas && setUserForm(datas.map((v) => transformUserDetail(v)))
@@ -69,5 +85,5 @@ export const useUserForm = ({ userDatas }: UseUserFormProps) => {
     }
   }, [userDatas])
 
-  return { userForm, setUserForm, transformUsersForm }
+  return { userForm, setUserForm, transformUsersForm, updateUsersMutation }
 }
