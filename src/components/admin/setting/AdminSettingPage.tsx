@@ -10,9 +10,10 @@ import {
   Tabs,
 } from 'antd'
 import type React from 'react'
-import { useAntdStore } from '@src/store/store'
+import { useAntdStore, useSettingStore } from '@src/store/store'
 import BranchMenu from '@src/components/admin/setting/BranchMenu'
 import { AdminGuard } from '@src/auth/AuthGuard'
+import UserMenu from './UserMenu'
 
 const queryClient = new QueryClient()
 
@@ -25,6 +26,11 @@ const AdminSettingPage: React.FC<DefaultPageProps> = () => {
       key: 'branch',
       label: 'Branch',
       children: <BranchMenu />,
+    },
+    {
+      key: 'user',
+      label: 'User',
+      children: <UserMenu />,
     },
   ]
 

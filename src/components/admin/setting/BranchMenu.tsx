@@ -18,6 +18,7 @@ import {
   updateBrach,
 } from '@src/services/BranchService'
 import type { Branch } from '@src/types/Branch'
+import { useSettingStore } from '@src/store/store'
 
 const { Text } = Typography
 
@@ -30,7 +31,7 @@ const ExportPDF: React.FC<ExportPdfProps> = ({ branches }) => {
 
   useEffect(() => {
     if (branches.length > 0) {
-      setBranchUuid(branches[0].uuid)
+      setBranchUuid(branches[0].branch_uuid)
     }
   }, [branches])
 
@@ -48,9 +49,9 @@ const ExportPDF: React.FC<ExportPdfProps> = ({ branches }) => {
             className="mr-2"
             value={branchUuid}
             style={{ width: 220 }}
-            onChange={(id) => setBranchUuid(id)}
+            onChange={(uuid) => setBranchUuid(uuid)}
             options={branches?.map((branch) => {
-              return { value: branch.uuid, label: branch.name }
+              return { value: branch.branch_uuid, label: branch.name }
             })}
           />
           <Button
@@ -155,12 +156,12 @@ const BranchManagement: React.FC<BranchManagementProps> = ({
           {/* Toggle Branch Status */}
           {branches?.map((branch, index) => {
             return (
-              <Row className="justify-between py-1">
+              <Row className="justify-between py-1" key={branch.name + index}>
                 <Text className="text-lg">{branch.name}</Text>
                 <Switch
                   onChange={(v, e) => {
                     e.preventDefault()
-                    onChangeBranchActiveStatus(v, branch.uuid)
+                    onChangeBranchActiveStatus(v, branch.branch_uuid)
                   }}
                   value={branch.is_active}
                   checkedChildren={<CheckOutlined />}
@@ -208,6 +209,7 @@ const BranchManagement: React.FC<BranchManagementProps> = ({
 }
 
 const BranchMenu: React.FC = () => {
+  const { setBranches } = useSettingStore((state) => state)
   const { data: branches, refetch: refetchBranch } = useInfiniteQuery({
     queryKey: ['branches'],
     queryFn: fetchBranches,
@@ -215,6 +217,12 @@ const BranchMenu: React.FC = () => {
     getNextPageParam: () => undefined,
     retry: 2,
   })
+
+  useEffect(() => {
+    if (branches) {
+      setBranches(branches.pages[0])
+    }
+  }, [branches])
 
   return (
     <Row className="w-full">
