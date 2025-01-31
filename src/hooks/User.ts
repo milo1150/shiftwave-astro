@@ -1,7 +1,12 @@
+import { transformUserDetail } from '@src/dto/User'
 import { createUser } from '@src/services/UserService'
-import type { CreateUserPayload } from '@src/types/User'
+import type {
+  CreateUserPayload,
+  TransformUserDetail,
+  UserDetail,
+} from '@src/types/User'
 import { useMutation } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const defaultCreateUserForm: CreateUserPayload = {
   u: '',
@@ -45,4 +50,24 @@ export const useCreateUser = ({
     onCancelCreateUser,
     createUserMutation,
   }
+}
+
+type UseUserFormProps = {
+  userDatas: UserDetail[] | undefined
+}
+
+export const useUserForm = ({ userDatas }: UseUserFormProps) => {
+  const [userForm, setUserForm] = useState<TransformUserDetail[]>([])
+
+  const transformUsersForm = () => {
+    userDatas && setUserForm(userDatas.map((v) => transformUserDetail(v)))
+  }
+
+  useEffect(() => {
+    if (userDatas) {
+      transformUsersForm()
+    }
+  }, [userDatas])
+
+  return { userForm, setUserForm }
 }
