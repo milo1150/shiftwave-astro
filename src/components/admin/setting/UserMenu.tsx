@@ -5,41 +5,27 @@ import {
 } from '@src/dto/User'
 import { fetchUsers, updateUsers } from '@src/services/UserService'
 import { useSettingStore } from '@src/store/store'
-import type { UserDetail } from '@src/types/User'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Button, Divider, Row, Select, Switch } from 'antd'
+import { UserAddOutlined } from '@ant-design/icons'
 import type { DefaultOptionType } from 'antd/es/select'
 import { useEffect, useState } from 'react'
 
 type UserFormProps = {
-  userDatas: UserDetail[]
-  refetchUsers: () => unknown
+  userForm: TransformUserDetail[]
+  setUserForm: React.Dispatch<React.SetStateAction<TransformUserDetail[]>>
 }
 
-const UserForm: React.FC<UserFormProps> = ({ userDatas, refetchUsers }) => {
-  const [users, setUsers] = useState<TransformUserDetail[]>([])
+const UserForm: React.FC<UserFormProps> = ({ userForm, setUserForm }) => {
   const { branchOptions } = useSettingStore((state) => state)
   const roleOptions: DefaultOptionType[] = [
     { label: 'admin', value: 'admin' },
     { label: 'user', value: 'user' },
   ]
 
-  const updateUsersMutation = useMutation({
-    mutationFn: updateUsers,
-    onSuccess: () => {
-      refetchUsers()
-    },
-  })
-
-  useEffect(() => {
-    if (userDatas) {
-      setUsers(userDatas.map((v) => transformUserDetail(v)))
-    }
-  }, [userDatas])
-
   return (
     <div>
-      {users?.map((user, rowIndex) => {
+      {userForm?.map((user, rowIndex) => {
         return (
           <Row
             key={user.user_uuid}
@@ -52,7 +38,7 @@ const UserForm: React.FC<UserFormProps> = ({ userDatas, refetchUsers }) => {
                 className="mr-2"
                 value={user.active_status}
                 onChange={(v) => {
-                  setUsers((prev) => {
+                  setUserForm((prev) => {
                     const updatedUsers = [...prev]
                     updatedUsers[rowIndex].active_status = v
                     return updatedUsers
@@ -68,7 +54,7 @@ const UserForm: React.FC<UserFormProps> = ({ userDatas, refetchUsers }) => {
                 options={branchOptions()}
                 value={user.branches}
                 onChange={(_, optionValues) => {
-                  setUsers((prev) => {
+                  setUserForm((prev) => {
                     if (!optionValues) return prev
                     const updatedUsers = [...prev]
                     updatedUsers[rowIndex].branches =
@@ -83,7 +69,7 @@ const UserForm: React.FC<UserFormProps> = ({ userDatas, refetchUsers }) => {
                 options={roleOptions}
                 value={user.role}
                 onChange={(roleValue) => {
-                  setUsers((prev) => {
+                  setUserForm((prev) => {
                     const updatedUsers = [...prev]
                     updatedUsers[rowIndex].role = roleValue
                     return updatedUsers
@@ -94,19 +80,6 @@ const UserForm: React.FC<UserFormProps> = ({ userDatas, refetchUsers }) => {
           </Row>
         )
       })}
-
-      <Divider className="my-2" />
-
-      <Row className="justify-end pt-2">
-        <Button
-          type="primary"
-          onClick={() =>
-            updateUsersMutation.mutate(transformUpdateUserPayload(users))
-          }
-        >
-          Save
-        </Button>
-      </Row>
     </div>
   )
 }
@@ -114,14 +87,49 @@ const UserForm: React.FC<UserFormProps> = ({ userDatas, refetchUsers }) => {
 type UserMenuProps = {}
 
 const UserMenu: React.FC<UserMenuProps> = () => {
+  // Query
   const { data: userDatas, refetch: refetchUsers } = useQuery({
     queryKey: ['user'],
     queryFn: fetchUsers,
   })
+  const updateUsersMutation = useMutation({
+    mutationFn: updateUsers,
+    onSuccess: () => {
+      refetchUsers()
+    },
+  })
+
+  // Form
+  const [userForm, setUserForm] = useState<TransformUserDetail[]>([])
+  const transformUsersForm = () => {
+    userDatas && setUserForm(userDatas.map((v) => transformUserDetail(v)))
+  }
+
+  useEffect(() => {
+    if (userDatas) {
+      transformUsersForm()
+    }
+  }, [userDatas])
 
   return (
     <>
-      <UserForm userDatas={userDatas || []} refetchUsers={refetchUsers} />
+      <UserForm userForm={userForm} setUserForm={setUserForm} />
+
+      <Divider className="my-2" />
+
+      <Row className="justify-end pt-2">
+        <Button type="primary" icon={<UserAddOutlined />} className="mr-2">
+          Add User
+        </Button>
+        <Button
+          type="primary"
+          onClick={() =>
+            updateUsersMutation.mutate(transformUpdateUserPayload(userForm))
+          }
+        >
+          Save
+        </Button>
+      </Row>
     </>
   )
 }
