@@ -10,10 +10,11 @@ import {
   Tabs,
 } from 'antd'
 import type React from 'react'
-import { useAntdStore, useSettingStore } from '@src/store/store'
+import { useAntdStore } from '@src/store/store'
 import BranchMenu from '@src/components/admin/setting/BranchMenu'
 import { AdminGuard } from '@src/auth/AuthGuard'
 import UserMenu from './UserMenu'
+import { useState } from 'react'
 
 const queryClient = new QueryClient()
 
@@ -21,6 +22,7 @@ const { Text } = Typography
 
 const AdminSettingPage: React.FC<DefaultPageProps> = () => {
   const { darkTheme } = useAntdStore((state) => state)
+  const [componentKey, setComponentKey] = useState<string>('')
   const items: TabsProps['items'] = [
     {
       key: 'branch',
@@ -30,7 +32,7 @@ const AdminSettingPage: React.FC<DefaultPageProps> = () => {
     {
       key: 'user',
       label: 'User',
-      children: <UserMenu />,
+      children: <UserMenu componentKey={componentKey} />,
     },
   ]
 
@@ -63,6 +65,9 @@ const AdminSettingPage: React.FC<DefaultPageProps> = () => {
             items={items}
             className="w-full"
             size="large"
+            onChange={(key) => {
+              setComponentKey(key)
+            }}
           />
         </Flex>
       </Flex>

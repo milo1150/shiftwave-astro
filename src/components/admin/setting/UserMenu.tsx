@@ -4,14 +4,16 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { Button, Divider, Row } from 'antd'
 import { UserAddOutlined } from '@ant-design/icons'
 import type { DefaultOptionType } from 'antd/es/select'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { UserForm } from '@src/components/admin/setting/UserForm'
 import { CreateUser } from '@src/components/admin/setting/CreateUser'
 import { useCreateUser, useUserForm } from '@src/hooks/User'
 
-type UserMenuProps = {}
+type UserMenuProps = {
+  componentKey: string
+}
 
-const UserMenu: React.FC<UserMenuProps> = () => {
+const UserMenu: React.FC<UserMenuProps> = ({ componentKey }) => {
   // Const
   const roleOptions: DefaultOptionType[] = [
     { label: 'admin', value: 'admin' },
@@ -31,9 +33,16 @@ const UserMenu: React.FC<UserMenuProps> = () => {
   })
 
   // Users form
-  const { userForm, setUserForm } = useUserForm({
+  const { userForm, setUserForm, transformUsersForm } = useUserForm({
     userDatas,
   })
+
+  useEffect(() => {
+    if (componentKey === 'user') {
+      refetchUsers()
+      transformUsersForm(userDatas || [])
+    }
+  }, [componentKey])
 
   // Create User
   const {

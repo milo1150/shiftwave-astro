@@ -59,15 +59,15 @@ type UseUserFormProps = {
 export const useUserForm = ({ userDatas }: UseUserFormProps) => {
   const [userForm, setUserForm] = useState<TransformUserDetail[]>([])
 
-  const transformUsersForm = () => {
-    userDatas && setUserForm(userDatas.map((v) => transformUserDetail(v)))
+  const transformUsersForm = (datas: UserDetail[]) => {
+    datas && setUserForm(datas.map((v) => transformUserDetail(v)))
   }
 
   useEffect(() => {
     if (userDatas) {
-      transformUsersForm()
+      transformUsersForm(userDatas)
     }
   }, [userDatas])
 
-  return { userForm, setUserForm }
+  return { userForm, setUserForm, transformUsersForm }
 }
