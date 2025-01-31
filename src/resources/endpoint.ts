@@ -18,6 +18,7 @@ export const ENDPOINT = {
   // User
   users: `${BASE_URL}user/get-users`,
   updateUsers: `${BASE_URL}user/update-users`,
+  createUser: `${BASE_URL}user/create-user`,
 
   // ratelimit
   reviewLimit: `${BASE_URL}review/limit`,

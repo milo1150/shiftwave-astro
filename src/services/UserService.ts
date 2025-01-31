@@ -1,10 +1,15 @@
 import axios from 'axios'
 import dayjs from 'dayjs'
 
-import type { LoginPayload, LoginResponse, UserDetail } from '@src/types/User'
+import type {
+  CreateUserPayload,
+  LoginPayload,
+  LoginResponse,
+  UpdateUserPayload,
+  UserDetail,
+} from '@src/types/User'
 import { ENDPOINT } from '@src/resources/endpoint'
 import axiosInstanceWithAuth from '@src/middleware/axios'
-import type { UpdateUserPayload } from '@src/dto/User'
 
 export async function login(payload: LoginPayload) {
   const res = await axios.post<LoginResponse>(ENDPOINT.login, payload)
@@ -39,4 +44,14 @@ export async function updateUsers(payload: UpdateUserPayload[]) {
   }
 
   return res.data
+}
+
+export async function createUser(payload: CreateUserPayload) {
+  const res = await axiosInstanceWithAuth.post(ENDPOINT.createUser, payload)
+
+  if (res.status !== 201) {
+    throw new Error('Failed to create users')
+  }
+
+  return res.status
 }
