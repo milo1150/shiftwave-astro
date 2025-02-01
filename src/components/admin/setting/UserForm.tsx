@@ -47,6 +47,7 @@ export const UserForm: React.FC<UserFormProps> = ({
                 maxTagCount="responsive"
                 options={branchOptions()}
                 value={user.branches}
+                disabled={user.role === 'admin'}
                 onChange={(_, optionValues) => {
                   setUserForm((prev) => {
                     if (!optionValues) return prev
