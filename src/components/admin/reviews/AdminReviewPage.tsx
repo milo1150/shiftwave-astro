@@ -105,7 +105,7 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
     page_size: 20,
     date_type: 'date',
     start_date: dayjs().format(DATE_FORMAT.API),
-    branch: '', // TODO: not empty
+    branch: '',
   })
 
   const { data: reviews, refetch: refetchReviews } = useInfiniteQuery({
@@ -114,6 +114,7 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
     queryFn: ({ pageParam }) => fetchReviews(pageParam),
     getNextPageParam: () => undefined,
     retry: 2,
+    enabled: !!params.branch,
   })
 
   const { data: averageRating, refetch: refetchAverageRating } =
@@ -130,6 +131,7 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
       queryFn: ({ pageParam }) => fetchAverageRating(pageParam),
       getNextPageParam: () => undefined,
       retry: 2,
+      enabled: !!params.branch,
     })
 
   useEffect(() => {
