@@ -9,6 +9,7 @@ export type FetchReviewsQueryParams = {
   end_date?: string
   month?: number
   year?: number
+  branch: string // uuid
 }
 
 export type FetchReviewsResponse = {

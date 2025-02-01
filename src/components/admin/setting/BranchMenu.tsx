@@ -18,7 +18,7 @@ import {
   updateBrach,
 } from '@src/services/BranchService'
 import type { Branch } from '@src/types/Branch'
-import { useSettingStore } from '@src/store/store'
+import { useBranchQuery } from '@src/hooks/Branch'
 
 const { Text } = Typography
 
@@ -209,20 +209,7 @@ const BranchManagement: React.FC<BranchManagementProps> = ({
 }
 
 const BranchMenu: React.FC = () => {
-  const { setBranches } = useSettingStore((state) => state)
-  const { data: branches, refetch: refetchBranch } = useInfiniteQuery({
-    queryKey: ['branches'],
-    queryFn: fetchBranches,
-    initialPageParam: '',
-    getNextPageParam: () => undefined,
-    retry: 2,
-  })
-
-  useEffect(() => {
-    if (branches) {
-      setBranches(branches.pages[0])
-    }
-  }, [branches])
+  const { branches, refetchBranch } = useBranchQuery()
 
   return (
     <Row className="w-full">
