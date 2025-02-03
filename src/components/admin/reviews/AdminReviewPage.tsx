@@ -22,15 +22,13 @@ import { match } from 'ts-pattern'
 
 import type { DefaultPageProps } from '@src/types/DefaultType'
 import type React from 'react'
-import type { FetchReviewsQueryParams, Review } from '@src/types/Review'
+import type { FetchReviewsQueryParams } from '@src/types/Review'
 
 import TotalReview from '@src/components/admin/reviews/TotalReview'
 import AverageRating from '@src/components/admin/reviews/AverageRating'
 import BarRating from '@src/components/admin/reviews/BarRating'
 import CustomerReviewCard from '@src/components/admin/reviews/CustomerReviewCard'
-import SwitchableDatepicker, {
-  type HandleOnChangeDateValueType,
-} from '@src/components/datepicker/SwitchableDatepicker'
+import { type HandleOnChangeDateValueType } from '@src/components/datepicker/SwitchableDatepicker'
 import {
   fetchAverageRating,
   fetchReviews,
@@ -38,65 +36,15 @@ import {
   webSocketReviews,
 } from '@src/services/ReviewService'
 import { DATE_FORMAT } from '@src/resources/date'
-import { useAntdStore, useSettingStore } from '@src/store/store'
+import { useAntdStore } from '@src/store/store'
 import { AdminGuard } from '@src/auth/AuthGuard'
-import { useBranchQuery } from '@src/hooks/Branch'
-import type { DefaultOptionType } from 'antd/es/select'
+import FilterAdminReview from '@src/components/admin/reviews/FilterAdminReview'
 
 const { Text } = Typography
 
 dayjs.extend(weekOfYear)
 
 const queryClient = new QueryClient()
-
-type ReviewPageFilterProps = {
-  dateChangeCallback: (e: HandleOnChangeDateValueType) => void
-  branchChangeCallback: (e: string) => void
-  setParams: React.Dispatch<React.SetStateAction<FetchReviewsQueryParams>>
-}
-
-const ReviewPageFilter: React.FC<ReviewPageFilterProps> = ({
-  dateChangeCallback,
-  branchChangeCallback,
-  setParams,
-}) => {
-  const { branches } = useBranchQuery()
-  const { branchOptions } = useSettingStore((state) => state)
-  const [branchUuid, setBrachUuid] = useState<string>(
-    branches?.pages[0][0].name || ''
-  )
-
-  useEffect(() => {
-    if (branches && branches?.pages[0].length > 0) {
-      // TODO: should match user's branch
-      console.log('branch inc', branches)
-      setBrachUuid(branches?.pages[0][0].name)
-      setParams((prev) => {
-        return { ...prev, branch: branches?.pages[0][0].branch_uuid }
-      })
-    }
-  }, [branches])
-
-  return (
-    <Row className="justify-center content-center">
-      <Select
-        style={{ width: '250px' }}
-        options={branchOptions()}
-        className="mr-2"
-        value={branchUuid}
-        onChange={(_, optionValues) => {
-          if (!optionValues) return
-          const branchOpt = optionValues as DefaultOptionType
-          setBrachUuid(branchOpt.value as string)
-          branchChangeCallback(branchOpt.value as string)
-        }}
-      />
-      <SwitchableDatepicker
-        onChangeValueCallBack={(e) => dateChangeCallback(e)}
-      />
-    </Row>
-  )
-}
 
 const AdminReviewPage: React.FC<DefaultPageProps> = () => {
   const { darkTheme } = useAntdStore((state) => state)
@@ -177,7 +125,6 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
   }
 
   const handleOnChangeBranch = (e: string) => {
-    console.log('change branch', e)
     // Trigger params change will automatic refetch apis
     setParams((prev) => {
       return {
@@ -219,7 +166,7 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
               <Text className="text-3xl font-bold">Reviews</Text>
 
               {/* Filter */}
-              <ReviewPageFilter
+              <FilterAdminReview
                 dateChangeCallback={handleOnChangeDateValue}
                 branchChangeCallback={handleOnChangeBranch}
                 setParams={setParams}

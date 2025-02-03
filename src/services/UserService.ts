@@ -26,6 +26,7 @@ export function setJwtCookie(token: string) {
   const secure = true // Set to true for HTTPS
   document.cookie = `j=${token}; Path=/; Secure=${secure}; SameSite=Strict; expires=${expire}`
 }
+
 export async function fetchUsers(): Promise<UserDetail[]> {
   const res = await axiosInstanceWithAuth.get<UserDetail[]>(ENDPOINT.users)
 
@@ -54,4 +55,16 @@ export async function createUser(payload: CreateUserPayload) {
   }
 
   return res.status
+}
+
+export async function getUserProfile() {
+  const res = await axiosInstanceWithAuth.get<UserDetail>(ENDPOINT.userProfile)
+
+  if (res.status !== 200) {
+    throw new Error('Failed to get user profile')
+  }
+
+  console.log(res.data)
+
+  return res.data
 }

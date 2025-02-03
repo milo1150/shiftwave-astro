@@ -14,7 +14,7 @@ export type UserDetail = {
   user_uuid: string
   username: string
   active_status: boolean
-  role: string
+  role: UserRole
   branches: UserBranch[]
 }
 

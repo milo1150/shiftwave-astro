@@ -1,5 +1,9 @@
 import { transformUserDetail } from '@src/dto/User'
-import { createUser, updateUsers } from '@src/services/UserService'
+import {
+  createUser,
+  getUserProfile,
+  updateUsers,
+} from '@src/services/UserService'
 import type {
   CreateUserPayload,
   TransformUserDetail,
@@ -7,6 +11,7 @@ import type {
 } from '@src/types/User'
 import {
   useMutation,
+  useQuery,
   type QueryObserverResult,
   type RefetchOptions,
 } from '@tanstack/react-query'
@@ -86,4 +91,13 @@ export const useUserForm = ({ userDatas, refetchUsers }: UseUserFormProps) => {
   }, [userDatas])
 
   return { userForm, setUserForm, transformUsersForm, updateUsersMutation }
+}
+
+export const useUserProfile = () => {
+  const { data: userProfile } = useQuery({
+    queryKey: ['user-profile'],
+    queryFn: getUserProfile,
+  })
+
+  return { userProfile }
 }
