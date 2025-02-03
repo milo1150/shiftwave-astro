@@ -6,9 +6,10 @@ import { useMutation } from '@tanstack/react-query'
 import { checkReviewRateLimit, createReview } from '@src/services/ReviewService'
 import type { DefaultPageProps } from '@src/types/DefaultType'
 import type { AxiosError } from 'axios'
+import CompleteReview from './CompleteReview'
 
 export interface Props extends DefaultPageProps {
-  branchId: number | null
+  branchId: string | null
 }
 
 const UserReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
@@ -65,7 +66,7 @@ const UserReviewComponent: React.FC<Props> = ({ lang, branchId }) => {
   if (isRateLimit) {
     return (
       <div className="h-full content-center place-items-center">
-        <img src="/src/assets/images/thx.png" alt="Thank you" />
+        <CompleteReview lang={lang} />
       </div>
     )
   }

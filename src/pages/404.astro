@@ -1,4 +1,5 @@
-<!-- ---
-import { Picture } from 'astro:assets'
-import myImage from '@src/assets/404v.jpg'
---- --><!-- <Picture src={myImage} formats={['jpg']} alt="404" /> -->404
+---
+import Error404 from '@src/components/result/Error404'
+---
+
+<Error404 client:only />

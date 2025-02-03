@@ -46,7 +46,7 @@ export async function fetchAverageRating(
 
 export async function createReview(payload: {
   score: number
-  branch: number
+  branch: string
   remark: string
   lang: LANG
 }): Promise<unknown> {
