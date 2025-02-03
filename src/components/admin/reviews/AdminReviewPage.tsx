@@ -5,7 +5,6 @@ import {
   Flex,
   Pagination,
   Row,
-  Select,
   theme,
   Typography,
 } from 'antd'
@@ -194,7 +193,7 @@ const AdminReviewPage: React.FC<DefaultPageProps> = () => {
           <Divider className="border-gray-300 " type="horizontal" />
           <Row
             gutter={12}
-            className="overflow-y-auto overflow-x-hidden content-start customer-review-container"
+            className="overflow-y-auto overflow-x-hidden content-start customer-review-container w-full"
             style={{ height: '75vh' }}
           >
             {reviews?.pages[0].items.length
