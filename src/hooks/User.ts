@@ -4,6 +4,7 @@ import {
   getUserProfile,
   updateUsers,
 } from '@src/services/UserService'
+import { useUserStore } from '@src/store/store'
 import type {
   CreateUserPayload,
   TransformUserDetail,
@@ -94,10 +95,18 @@ export const useUserForm = ({ userDatas, refetchUsers }: UseUserFormProps) => {
 }
 
 export const useUserProfile = () => {
+  const { setUser } = useUserStore((state) => state)
   const { data: userProfile } = useQuery({
     queryKey: ['user-profile'],
     queryFn: getUserProfile,
   })
+
+  useEffect(() => {
+    if (userProfile) {
+      setUser(userProfile)
+      console.log(userProfile)
+    }
+  }, [userProfile])
 
   return { userProfile }
 }

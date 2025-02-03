@@ -1,5 +1,6 @@
 import { transformBranchOptions } from '@src/dto/Branch'
 import type { Branch } from '@src/types/Branch'
+import type { UserDetail } from '@src/types/User'
 import type { DefaultOptionType } from 'antd/es/select'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -30,3 +31,18 @@ export const useSettingStore = create<SettingStore>()((set, get) => ({
   setBranches: (items) => set(() => ({ branches: items })),
   branchOptions: () => transformBranchOptions(get().branches),
 }))
+
+type UserStore = {
+  userProfile: UserDetail | undefined
+  setUser: (user: UserDetail) => void
+}
+
+export const useUserStore = create<UserStore>()(
+  persist(
+    (set) => ({
+      userProfile: undefined,
+      setUser: (u) => set(() => ({ userProfile: u })),
+    }),
+    { name: 'user-profile' }
+  )
+)

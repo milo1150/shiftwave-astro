@@ -12,8 +12,9 @@ import { Layout, Menu, ConfigProvider, theme } from 'antd'
 import { match } from 'ts-pattern'
 import { ROUTING, type ShiftwaveRoute } from '@src/resources/route'
 import type { AvailableLanguage } from '@src/i18n/i18n'
-import { useAntdStore } from '@src/store/store'
+import { useAntdStore, useUserStore } from '@src/store/store'
 import { logout } from '@src/auth/AuthGuard'
+import _ from 'lodash'
 
 type Props = {
   children: ReactNode
@@ -24,6 +25,7 @@ type Props = {
 const { Sider, Content } = Layout
 
 const AdminLayout: React.FC<Props> = ({ children, lang, routeMenu }) => {
+  const userProfile = useUserStore((state) => state.userProfile)
   const { darkTheme, toggleDarkTheme } = useAntdStore((state) => state)
   const [collapsed, _setCollapsed] = useState(true)
   const [selectedMenuKey, setSelectedMenuKey] = useState<ShiftwaveRoute[]>([
@@ -72,28 +74,37 @@ const AdminLayout: React.FC<Props> = ({ children, lang, routeMenu }) => {
                 )
                 .run()
             }}
-            items={[
+            items={_([
               {
-                key: 'reviews' as ShiftwaveRoute,
+                key: 'reviews',
                 icon: <MessageFilled />,
                 label: 'Reviews',
               },
-              {
-                key: 'setting' as ShiftwaveRoute,
-                icon: <SettingFilled />,
-                label: 'Setting',
-              },
-              {
-                key: 'darktheme',
-                icon: <MoonFilled />,
-                label: 'Dark theme',
-              },
-              {
-                key: 'logout',
-                icon: <LogoutOutlined />,
-                label: 'Logout',
-              },
-            ]}
+            ])
+              .concat(
+                userProfile?.role === 'admin'
+                  ? [
+                      {
+                        key: 'setting',
+                        icon: <SettingFilled />,
+                        label: 'Setting',
+                      },
+                    ]
+                  : []
+              )
+              .concat([
+                {
+                  key: 'darktheme',
+                  icon: <MoonFilled />,
+                  label: 'Dark theme',
+                },
+                {
+                  key: 'logout',
+                  icon: <LogoutOutlined />,
+                  label: 'Logout',
+                },
+              ])
+              .value()}
           />
         </Sider>
         <Layout>
