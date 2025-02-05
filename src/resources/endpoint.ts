@@ -1,10 +1,13 @@
-export const BASE_URL = 'http://localhost:8080/v1/'
-export const WS_BASE_URL = 'ws://localhost:8080/v1/'
-export const REAL_BASE_URL = 'http://localhost:8080/'
+// export const BASE_URL = 'http://localhost:8080/v1/'
+export const BASE_URL = `${import.meta.env.PUBLIC_API_BASE_URL}/v1/`
+// export const WS_BASE_URL = 'ws://localhost:8080/v1/'
+export const WS_BASE_URL = `${import.meta.env.PUBLIC_API_BASE_URL}/v1/`
+// export const DEFAULT_BASE_URL = 'http://localhost:8080/'
+export const DEFAULT_BASE_URL = `${import.meta.env.PUBLIC_API_BASE_URL}/`
 
 export const ENDPOINT = {
   login: `${BASE_URL}login`,
-  generatePDF: `${REAL_BASE_URL}generate-pdf`,
+  generatePDF: `${DEFAULT_BASE_URL}generate-pdf`,
   averageRating: `${BASE_URL}reviews/average-rating`,
 
   // Review
