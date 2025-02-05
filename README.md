@@ -20,5 +20,5 @@ docker build -t astro-dev .
 ```
 
 ```bash
-docker run -p 8080:8080 -e SERVER_NAME=localhost astro-dev
+docker run -p 4321:4321 -e SERVER_NAME=localhost astro-dev
 ```
