@@ -18,12 +18,7 @@ export default defineConfig({
   },
   vite: {
     server: {
-      allowedHosts: [
-        'shiftwave-dev.mijio.app',
-        'localhost',
-        '127.0.0.1',
-        'all',
-      ],
+      allowedHosts: true,
       port: 4321,
       host: '0.0.0.0',
     },
