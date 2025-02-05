@@ -12,4 +12,8 @@ export default defineConfig({
     locales: ['th', 'en'],
     defaultLocale: 'en',
   },
+  server: {
+    port: 4321,
+    host: true, // Required for Docker deployments
+  },
 })
