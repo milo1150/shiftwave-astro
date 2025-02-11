@@ -7,6 +7,9 @@ import {
   SettingFilled,
   MoonFilled,
   LogoutOutlined,
+  CalendarOutlined,
+  CalendarFilled,
+  ScheduleFilled,
 } from '@ant-design/icons'
 import { Layout, Menu, ConfigProvider, theme } from 'antd'
 import { match } from 'ts-pattern'
@@ -64,6 +67,11 @@ const AdminLayout: React.FC<Props> = ({ children, lang, routeMenu }) => {
                   window.location.href = `/${lang}/d/${ROUTING.setting}`
                   setSelectedMenuKey(['setting'])
                 })
+                .with('schedule', () => {
+                  if (selectedMenuKey[0] === 'schedule') return
+                  window.location.href = `/${lang}/d/${ROUTING.schedule}`
+                  setSelectedMenuKey(['schedule'])
+                })
                 .when(
                   (type) => type === 'darktheme',
                   () => toggleDarkTheme()
@@ -79,6 +87,11 @@ const AdminLayout: React.FC<Props> = ({ children, lang, routeMenu }) => {
                 key: 'reviews',
                 icon: <MessageFilled />,
                 label: 'Reviews',
+              },
+              {
+                key: 'schedule',
+                icon: <ScheduleFilled />,
+                label: 'Schedule',
               },
             ])
               .concat(

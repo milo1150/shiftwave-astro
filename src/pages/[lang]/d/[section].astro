@@ -4,6 +4,7 @@ import _ from 'lodash'
 import AdminLayout from '@src/layouts/AdminLayout'
 import WrappedAdminReviewPage from '@src/components/admin/reviews/AdminReviewPage'
 import WrapperAdminSettingPage from '@src/components/admin/setting/AdminSettingPage'
+import WrapperAdminSchedulePage from '@src/components/admin/schedule/AdminSchedulePage'
 
 import type { ShiftwaveRoute } from '@src/resources/route'
 import type { AvailableLanguage } from '@src/i18n/i18n'
@@ -15,6 +16,8 @@ export function getStaticPaths() {
     { params: { lang: 'th', section: 'reviews' } },
     { params: { lang: 'en', section: 'setting' } },
     { params: { lang: 'th', section: 'setting' } },
+    { params: { lang: 'en', section: 'schedule' } },
+    { params: { lang: 'th', section: 'schedule' } },
   ]
 }
 
@@ -35,7 +38,7 @@ const titleMenu = _.upperFirst(section)
       routeMenu={section as ShiftwaveRoute}
     >
       {
-        section === 'reviews' && (
+        (section as ShiftwaveRoute) === 'reviews' && (
           <WrappedAdminReviewPage
             transition:animate="fade"
             client:only="react"
@@ -43,8 +46,19 @@ const titleMenu = _.upperFirst(section)
           />
         )
       }
+
       {
-        section === 'setting' && (
+        (section as ShiftwaveRoute) === 'schedule' && (
+          <WrapperAdminSchedulePage
+            transition:animate="fade"
+            client:only="react"
+            lang={lang as AvailableLanguage}
+          />
+        )
+      }
+
+      {
+        (section as ShiftwaveRoute) === 'setting' && (
           <WrapperAdminSettingPage
             transition:animate="fade"
             client:only="react"
