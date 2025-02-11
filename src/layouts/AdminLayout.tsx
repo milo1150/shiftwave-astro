@@ -7,8 +7,6 @@ import {
   SettingFilled,
   MoonFilled,
   LogoutOutlined,
-  CalendarOutlined,
-  CalendarFilled,
   ScheduleFilled,
 } from '@ant-design/icons'
 import { Layout, Menu, ConfigProvider, theme } from 'antd'
