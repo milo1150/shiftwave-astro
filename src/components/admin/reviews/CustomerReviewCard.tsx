@@ -1,7 +1,7 @@
 import { Card, Rate, Tooltip } from 'antd'
 import { TranslationOutlined } from '@ant-design/icons'
 import type React from 'react'
-import '@src/style/custom-rate-el.css'
+import '@src/styles/custom-rate-el.css'
 import { useState } from 'react'
 import type { LANG } from '@src/i18n/i18n'
 

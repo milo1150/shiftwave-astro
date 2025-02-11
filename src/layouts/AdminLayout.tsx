@@ -1,5 +1,4 @@
-import '@src/style/global.css'
-import '@src/style/tailwind.css'
+import '@src/styles/global.css'
 
 import React, { useState, type ReactNode } from 'react'
 import {
