@@ -12,6 +12,7 @@ import {
   MIN_SHIFT_PER_SCHEDULE,
   type ShiftList,
 } from '@src/types/Schedule'
+import type dayjs from 'dayjs'
 
 const ShiftListComponent: React.FC = () => {
   const [shiftList, setShiftList] = useState<ShiftList>([
@@ -19,7 +20,6 @@ const ShiftListComponent: React.FC = () => {
   ])
 
   const onAddShift = (shiftList: ShiftList) => {
-    console.log('add')
     if (shiftList.length >= MAX_SHIFT_PER_SCHEDULE) return
     setShiftList((prev) => {
       const newShiftList = [...prev]
@@ -78,18 +78,37 @@ const ShiftListComponent: React.FC = () => {
   )
 }
 
-export const ScheduleActionButtons: React.FC = () => {
+type ScheduleActionButtonsProps = {
+  addNewMember: () => void
+  month: dayjs.Dayjs
+  setMonth: React.Dispatch<React.SetStateAction<dayjs.Dayjs>>
+}
+
+export const ScheduleActionButtons: React.FC<ScheduleActionButtonsProps> = ({
+  addNewMember,
+  month,
+  setMonth,
+}) => {
   return (
     <Row className="items-center">
       <section>
         <Button
           className="mr-2"
-          color="danger"
+          color="blue"
           variant="solid"
-          icon={<SyncOutlined />}
+          icon={<PlusOutlined />}
+          onClick={addNewMember}
         >
+          Add member
+        </Button>
+        <Button color="danger" variant="solid" icon={<SyncOutlined />}>
           Random
         </Button>
+      </section>
+
+      <Divider className="mx-3 text-2xl  border-gray-300" type="vertical" />
+
+      <section>
         <Button
           className="mr-2"
           color="cyan"
@@ -98,8 +117,8 @@ export const ScheduleActionButtons: React.FC = () => {
         >
           Save
         </Button>
-        <Button color="blue" variant="solid" icon={<FileExcelFilled />}>
-          Excel
+        <Button color="cyan" variant="solid" icon={<FileExcelFilled />}>
+          Export Excel
         </Button>
       </section>
 
@@ -111,6 +130,8 @@ export const ScheduleActionButtons: React.FC = () => {
           picker="month"
           format={'MMMM YYYY'}
           allowClear={false}
+          value={month}
+          onChange={setMonth}
         />
       </section>
 
